@@ -24,7 +24,7 @@ from Helpers.Database import Jambi
 # class, but we are importing all of `GoogleExample`.
 from SiteAutomations import GoogleExample
 
-# More on [`Jambi`](https://github.com/Wykleph/Slack/blob/master/Helpers/Database.py) later.
+# More on `Jambi` later.
 jambi = Jambi()
 
 # Use a different browser by modifying your `.env` file.
@@ -124,7 +124,7 @@ use the database helper, [`Jambi`](https://github.com/Wykleph/Slack/blob/master/
 Middleware for a generated model looks like this(without the example value modifications/comments I added):
 
 ```python
-class [UserMiddleware](https://github.com/Wykleph/Slack/blob/master/Middleware/UserMiddleware.py)(Middleware):
+class UserMiddleware(Middleware):
   # Whenever User data is added to the database, the attribute's `set_attribute` method will be called.
   def set_created_at(self, value):
       if value == '':
