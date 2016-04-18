@@ -41,7 +41,7 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     sleep(5)
 ```
 
-_Check out the `Example.py` file for more detailed documentation on the workflow_
+_Check out the [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file for more detailed documentation on the workflow_
 
 ## Dependencies
 
@@ -52,8 +52,8 @@ _Check out the `Example.py` file for more detailed documentation on the workflow
 Once you have the dependencies, you can download this repository and start using it as is, however you may want to read over the
 documentation below.
 
-__There is an `Example.py` file that shows exactly what an application looks like when utilizing the `Slack`
-framework.  `Example.py` can be used as a template.__
+_There is an [`Example.py` file](https://github.com/Wykleph/Slack/blob/master/Example.py) that shows exactly what an application looks like when utilizing the `Slack`
+framework.  `Example.py` can be used as a template._
 
 ## .env File
 
