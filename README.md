@@ -60,7 +60,7 @@ framework.  `Example.py` can be used as a template._
 The [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file allows you to define how you want `Selenium` and `peewee` work.  It's essentially a `.ini` file that
 holds options for your application.
 
-The default `.env` file looks like this:
+The default [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file looks like this:
 ```python
 # Note the lack of quotes.  Don't use quotes when setting these options.
 # Browsers: chrome, firefox, safari, phantomjs, opera
@@ -77,7 +77,7 @@ DB_PASSWORD=None
 You can tell `Selenium` which browser to use, and you can tell `peewee` all the information about how to connect to your
 database.
 
-You can manually set any key/value you do not want to show up in version control inside the `.env` file, then use the
+You can manually set any key/value you do not want to show up in version control inside the [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file, then use the
 `env` helper function located in [`Config.Environment`](https://github.com/Wykleph/Slack/blob/master/Config/Environment.py) to retrieve the values later.
 
 ## Creating Models and Middleware using [genesis.py](https://github.com/Wykleph/Slack/blob/master/genesis.py)
