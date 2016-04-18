@@ -80,12 +80,12 @@ database.
 You can manually set any key/value you do not want to show up in version control inside the `.env` file, then use the
 `env` helper function located in [`Config.Environment`](https://github.com/Wykleph/Slack/blob/master/Config/Environment.py) to retrieve the values later.
 
-## Creating Models and Middleware using genesis.py
+## Creating Models and Middleware using [genesis.py](https://github.com/Wykleph/Slack/blob/master/genesis.py)
 
 ### Models
 Models are defined based on `peewee` models, so [check out how to use them](http://docs.peewee-orm.com/en/latest/peewee/models.html)..
 
-Create models using the following syntax in the command line:
+Create models using [genesis.py](https://github.com/Wykleph/Slack/blob/master/genesis.py), with the following syntax, from the command line:
 
 `python genesis.py make:model ModelName`.
 
