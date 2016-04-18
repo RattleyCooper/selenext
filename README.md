@@ -40,7 +40,7 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     sleep(5)
 ```
 
-_Check out the __`Example.py`__ file for more detailed documentation on the workflow_
+_Check out the `Example.py` file for more detailed documentation on the workflow_
 
 ## Dependencies
 
