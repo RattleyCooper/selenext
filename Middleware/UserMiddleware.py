@@ -22,8 +22,8 @@ class UserMiddleware(Middleware):
         return value
 
     def set_username(self, value):
-        return value + '_testies'
+        return value
 
     def get_username(self, value):
-        return value.replace('_testies', '')
+        return value
 
