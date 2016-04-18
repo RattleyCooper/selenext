@@ -171,7 +171,7 @@ on attributes of a web element.  This is helpful when you have elements that hav
 `<td data-tag='x_24'>`.  Elements can also be filtered the same way by their inner text.
 
 ```python
-elements = driver.find_elements_by_xpath('//td)
+elements = driver.find_elements_by_xpath('//td')
 ele_filt = WebElementFilter()
 
 # Use `filtered_elements = [e for e in elements if ele_filt.inner_text().wildcard_match(e, 'x_*')]`
