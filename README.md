@@ -1,6 +1,6 @@
 # Slack
 Slack is a micro-framework for simple web scraping using selenium.  A lot about how the framework operates was inspired by the
-Laravel framework(PHP), which used for created web-applications.
+Laravel framework(PHP), which is used for created web-applications.
 
 ## About
 
