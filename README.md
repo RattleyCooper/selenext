@@ -55,7 +55,7 @@ documentation below.
 _There is an [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows exactly what an application looks like when utilizing the `Slack`
 framework.  `Example.py` can be used as a template._
 
-## [.env File](https://github.com/Wykleph/Slack/blob/master/.env)
+## [.env](https://github.com/Wykleph/Slack/blob/master/.env) File
 
 The [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file allows you to define how you want `Selenium` and `peewee` work.  It's essentially a `.ini` file that
 holds options for your application.
