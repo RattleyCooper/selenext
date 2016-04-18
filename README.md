@@ -23,18 +23,24 @@ from Helpers.Database import Jambi
 # automating.
 from SiteAutomations import GoogleExample
 
+# More on `Jambi` later.
 jambi = Jambi()
 
 # Use a different browser by modifying your `.env` file.
 with quitting(env_driver(env("BROWSER"))()) as driver:
     google_search = GoogleExample.Search(driver, jambi)
+
+    # Do Search
     google_search.perform_search('google wiki')
     sleep(1)
 
+    # Do scrape
     results = google_search.scrape_wikipedia_href_results()
     print results
     sleep(5)
 ```
+
+_Check out the __`Example.py`__ file for more detailed documentation on the workflow_
 
 ## Dependencies
 
