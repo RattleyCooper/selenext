@@ -10,6 +10,38 @@ side of things pretty well.  The idea of `SiteAutomations` was also implimented 
 flow.  Writing all of your automations inside of a `SiteAutomation` keeps things modular and neatly organized.  There are also
 helper methods for filtering web elements returned by `Selenium`'s `find_elements` method(more on that later).
 
+You end up with a pretty clean area for piecing together your automations:
+
+```python
+# Import appropriate modules / packages
+import Models
+from Config.Environment import env, env_driver
+from Helpers.Contexts import quitting
+from Helpers.Database import Jambi
+
+# `SiteAutomations` holds the code that drives selenium's `WebDriver` instance.
+# Create a file and class for each site you are working with.
+from SiteAutomations import GoogleExample
+
+jambi = Jambi()
+
+# We take advantage of the `with` statement to close/quit our `WebDriver`
+# instance in case of an error.  Use a different browser by modifying
+# your `.env` file.
+with quitting(env_driver(env("BROWSER"))()) as driver:
+    # Here we use the `GoogleExample`'s `Search` class to perform a
+    # google search.
+    google_search = GoogleExample.Search(driver, jambi)
+    google_search.perform_search('google wiki')
+    sleep(1)
+
+    # The `scrape_wikipedia_href_results` method contains an example
+    # of using the `WebElementFilter` class to do advanced filtering.
+    results = google_search.scrape_wikipedia_href_results()
+    print results
+    sleep(5)
+```
+
 ## Dependencies
 
 * [peewee](http://docs.peewee-orm.com/en/latest/)
