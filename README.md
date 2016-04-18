@@ -18,9 +18,10 @@ from Config.Environment import env, env_driver
 from Helpers.Contexts import quitting
 from Helpers.Database import Jambi
 
-# `SiteAutomations` holds the code that drives selenium's `WebDriver` instance.
-# Create a file and class in the `SiteAutomations` folder for each site you are
-# automating.
+# `SiteAutomations` holds the code that drives selenium's `WebDriver` instance. Create a
+# file and class in the `SiteAutomations` folder for each site you are automating. In
+# this example we are using methods from `SiteAutomations.GoogleExample`'s `Search`
+# class, but we are importing all of `GoogleExample`.
 from SiteAutomations import GoogleExample
 
 # More on `Jambi` later.
