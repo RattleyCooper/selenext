@@ -1,3 +1,15 @@
+# Python compiled files
+*.pyc
+
+# Databases
+*.db
+
+# PyCharm Project files
+.idea
+
+# Environment file
+.env
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
