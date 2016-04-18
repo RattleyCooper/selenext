@@ -17,7 +17,9 @@ helper methods for filtering web elements returned by `Selenium`'s `find_element
 * [selenium python bindings](http://selenium-python.readthedocs.org/)
 
 Once you have the dependencies, you can download this repository and start using it as is, however you may want to read over the
-documentation below.  __There is an `Example.py` file that shows exactly what an application looks like when utilizing the `Slack`
+documentation below.
+
+__There is an `Example.py` file that shows exactly what an application looks like when utilizing the `Slack`
 framework.  `Example.py` can be used as a template.__
 
 ## .env File
