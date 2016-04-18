@@ -23,6 +23,8 @@ is provided along with an example of booting up the framework
 and running site automations.
 """
 
+# todo: Have the .env file generate automatically and remove it from the repository.
+
 from time import sleep
 import Models
 from Config.Environment import env, env_driver
