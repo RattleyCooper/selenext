@@ -13,6 +13,7 @@ helper methods for filtering web elements returned by `Selenium`'s `find_element
 You end up with a pretty clean area for piecing together your automations:
 
 ```python
+from time import sleep
 import Models
 from Config.Environment import env, env_driver
 from Helpers.Contexts import quitting
@@ -143,6 +144,8 @@ we could add attributes to our model, then run `genesis.py make:middleware User`
 model.  Also, as you can see, the syntax for any middleware method is either `set_` + the attribute name, if you want data
 to be modified going in, and `get_` + attribute name if you want data to be modified coming out of the database.
 
+#### Jambi
+
 The way we run middleware is by passing the model's method along with the data to one of `Jambi`'s
 methods.  Example:
 
@@ -161,8 +164,59 @@ user = jambi.model_func(Models.User.get_or_create, **credentials)
 print user
 ```
 
+If you only want to modify data when writing to the database, use `jambi.model_func_in`.  If you only want to
+modify data coming out of the database, use `jambi.model_func_out`.
+
+##### Queries in Jambi
+
+By default, only data coming out of the database is modified with middleware when using `jambi.query`.
+
+To perform a query, build your query like you normally would in `peewee`, then use the `jambi.query` method
+instead of calling `execute()` on the query object.
+
+```python
+import Models
+from Helpers.Database import Jambi
+
+jambi = Jambi()
+query = Models.User.select().where(Models.User.username == 'SomeUser123')
+results = jambi.query(Models.User, query)
+
+```
+
+You can `create` and `insert` records individually...
+
+```python
+import Models
+from Helpers.Database import Jambi
+
+jambi = Jambi()
+user1 = {'username': 'bob123', 'email':'bob123@mail.mail', 'password':'123Bob'}
+user2 = {'username': 'jim123', 'email':'jim123@mail.mail', 'password':'123Jim'}
+# pass the user information as **kwargs
+user1_obj = jambi.create(Models.User, **user1)
+user2_obj = jambi.insert(Models.User, **user2)
+```
+
+or you can use `jambi.insert_many` to insert many records.  You can add `jambi.atomic` to the method chain to take
+advantage of `peewee`'s atomic inserts.
+
+```python
+import Models
+from Helpers.Database import Jambi
+
+jambi = Jambi()
+
+users = [
+    {'username': 'bob123', 'email':'bob123@mail.mail', 'password':'123Bob'},
+    {'username': 'jim123', 'email':'jim123@mail.mail', 'password':'123Jim'}
+]
+
+jambi.atomic().insert_many(Models.User, users)
+```
+
 _Note:  It's important to test the data you get back from `Jambi` since it will return a `peewee` model instance,
-a dictionary or a `boolean`._
+a `dict` or a `boolean`.  Wishes are granted, but the outcome isn't always what you might expect._
 
 ## Filtering `WebElement` Instances
 
@@ -171,6 +225,8 @@ on attributes of a web element.  This is helpful when you have elements that hav
 `<td data-tag='x_24'>`.  Elements can also be filtered the same way by their inner text.
 
 ```python
+from Helpers.Validation import WebElementFilter
+
 elements = driver.find_elements_by_xpath('//td')
 ele_filt = WebElementFilter()
 
