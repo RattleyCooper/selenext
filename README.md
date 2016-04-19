@@ -94,7 +94,7 @@ If you are on windows, it might look something like:
 
 `c:/python27/python.exe c:/path/to/genesis.py make:model ModelName`.
 
-The models are appended to the [`Models.py`](https://github.com/Wykleph/Slack/blob/master/Models.py) file, and any changes can be made in the `Models.py`
+The models are appended to the [`Models.py`](https://github.com/Wykleph/Slack/blob/master/Models.py) file, and any changes to `peewee` models can be made in the `Models.py`
 file. __This will probably change to operate similar to the middleware classes in the future.__
 
 Once you have defined your models, they are accessed using the `Models.ModelName` syntax.
