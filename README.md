@@ -59,7 +59,8 @@ framework.  `Example.py` can be used as a template._
 ## [.env](https://github.com/Wykleph/Slack/blob/master/.env) File
 
 The [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file allows you to define how you want `Selenium` and `peewee` work.  It's essentially a `.ini` file that
-holds options for your application.
+holds options for your application.  _Note: Load your `WebDriver` instance using the environment helper functions.  Example in
+[`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py)_
 
 The default [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file looks like this:
 ```python
@@ -125,6 +126,9 @@ use the database helper, [`Jambi`](https://github.com/Wykleph/Slack/blob/master/
 Middleware for a generated model looks like this(without the example value modifications/comments I added):
 
 ```python
+from Middleware import Middleware
+
+
 class UserMiddleware(Middleware):
   # Whenever User data is added to the database, the attribute's `set_attribute` method will be called.
   def set_created_at(self, value):
@@ -146,7 +150,7 @@ to be modified going in, and `get_` + attribute name if you want data to be modi
 
 #### Jambi
 
-The way we run middleware is by passing the model's method along with the data to one of `Jambi`'s
+The way we run middleware is by passing the model's method name, along with the data to one of `Jambi`'s
 methods.  Example:
 
 ```python
@@ -154,18 +158,18 @@ methods.  Example:
 import Models
 from Helpers.Database import Jambi
 
-jambi = Jambi()
+jambi_user = Jambi(Models.User)
 credentials = {
   'username': 'SomeGuyNamedBobby',
   'email': 'bobby@domain.com',
   'password': 'password_for_site'
 }
-user = jambi.model_func(Models.User.get_or_create, **credentials)
+user = jambi_user.model_func('get_or_create', **credentials)
 print user
 ```
 
-If you only want to modify data when writing to the database, use `jambi.model_func_in`.  If you only want to
-modify data coming out of the database, use `jambi.model_func_out`.
+If you only want to modify data when writing to the database, use `jambi_user.model_func_in`.  If you only want to
+modify data coming out of the database, use `jambi_user.model_func_out`.
 
 ##### Queries in Jambi
 
@@ -178,9 +182,9 @@ instead of calling `execute()` on the query object.
 import Models
 from Helpers.Database import Jambi
 
-jambi = Jambi()
+jambi_user = Jambi(Models.User)
 query = Models.User.select().where(Models.User.username == 'SomeUser123')
-results = jambi.query(Models.User, query)
+results = jambi_user.query(query)
 
 ```
 
@@ -190,29 +194,29 @@ You can `create` and `insert` records individually...
 import Models
 from Helpers.Database import Jambi
 
-jambi = Jambi()
+jambi_user = Jambi(Models.User)
 user1 = {'username': 'bob123', 'email':'bob123@mail.mail', 'password':'123Bob'}
 user2 = {'username': 'jim123', 'email':'jim123@mail.mail', 'password':'123Jim'}
 # pass the user information as **kwargs
-user1_obj = jambi.create(Models.User, **user1)
-user2_obj = jambi.insert(Models.User, **user2)
+user1_obj = jambi_user.create(**user1)
+user2_obj = jambi_user.insert(**user2)
 ```
 
-or you can use `jambi.insert_many` to insert many records.  You can add `jambi.atomic` to the method chain to take
+or you can use `jambi_user.insert_many` to insert many records.  You can add `jambi_user.atomic` to the method chain to take
 advantage of `peewee`'s atomic inserts.
 
 ```python
 import Models
 from Helpers.Database import Jambi
 
-jambi = Jambi()
+jambi_user = Jambi(Models.User)
 
 users = [
     {'username': 'bob123', 'email':'bob123@mail.mail', 'password':'123Bob'},
     {'username': 'jim123', 'email':'jim123@mail.mail', 'password':'123Jim'}
 ]
 
-jambi.atomic().insert_many(Models.User, users)
+jambi_user.atomic().insert_many(users)
 ```
 
 _Note:  It's important to test the data you get back from `Jambi` since it will return a `peewee` model instance,

@@ -32,7 +32,7 @@ from Helpers.Contexts import quitting
 from Helpers.Database import Jambi
 from SiteAutomations import GoogleExample
 
-jambi = Jambi()
+jambi_user = Jambi(Models.User)
 
 credentials = {
     'username': 'SomeGuyNamedBobby',
@@ -45,7 +45,7 @@ credentials = {
 # documentation on what returns what, however in a lot of cases, it
 # just depends.  This will be changed in the future so that returned
 # values are more consistent.
-user = jambi.model_func(Models.User.get_or_create, **credentials)
+user = jambi_user.model_func('get_or_create', **credentials)
 print user
 
 # This is where selenium starts up.  Use the environment helpers
@@ -69,7 +69,7 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     # `GoogleExample.py` file to find out how to use
     # the advanced filtering techniques that the
     # Validation module provides.
-    google_search = GoogleExample.Search(driver, jambi)
+    google_search = GoogleExample.Search(driver, jambi_user)
     google_search.perform_search('google wiki')
     sleep(1)
 

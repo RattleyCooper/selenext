@@ -2,7 +2,7 @@ import Middleware
 import Models
 
 
-class Jambi(object):
+class JambiBase(object):
     def __init__(self):
         models_sub = [
             'BareField', 'BaseModel', 'BigIntegerField',
@@ -34,7 +34,7 @@ class Jambi(object):
                 # Import the Middleware.
                 exec ('from Middleware.{} import {}'.format(middleware_name, middleware_name))
 
-        self.atomic = False
+        self.is_atomic = False
 
     def _get_modified_func_params(self, model, function, **kwargs):
         """ Run a peewee model function and modify the parameters. """
@@ -88,7 +88,7 @@ class Jambi(object):
     def atomic(self, is_atomic=True):
         """ Enable peewee's atomic queries if the method supports it. """
 
-        self.atomic = is_atomic
+        self.is_atomic = is_atomic
         return self
 
     def create(self, model, **kwargs):
@@ -129,7 +129,7 @@ class Jambi(object):
             data_source[key] = self._get_modified_inputs(model, **data_dict)
 
         # print data_source
-        if not self.atomic:
+        if not self.is_atomic:
             return model.insert_many(data_source).execute()
 
         from Config.Environment import env, get_database
@@ -165,3 +165,43 @@ class Jambi(object):
         # print dir(query)
         query_results = self._get_modified_query_outputs(model, query)
         return query_results
+
+
+class Jambi(object):
+    def __init__(self, model):
+        self.jambi = JambiBase()
+        self.model = model
+        self.do_atomic = False
+
+    def atomic(self, is_atomic=True):
+        self.do_atomic = is_atomic
+        return self
+
+    def create(self, **kwargs):
+        return self.jambi.create(self.model, **kwargs)
+
+    def insert(self, **kwargs):
+        return self.jambi.insert(self.model, **kwargs)
+
+    def insert_many(self, data_source):
+        j = self.jambi.atomic()
+        if self.do_atomic:
+            # Unset the flag.
+            self.atomic(is_atomic=False)
+            return j.insert_many(self.model, data_source)
+        return self.jambi.insert_many(self.model, data_source)
+
+    def model_func(self, function_name, **kwargs):
+        function = getattr(self.model, function_name)
+        return self.jambi.model_func(function, **kwargs)
+
+    def model_func_pull(self, function_name, **kwargs):
+        function = getattr(self.model, function_name)
+        return self.jambi.model_func_pull(function, **kwargs)
+
+    def model_func_push(self, function_name, **kwargs):
+        function = getattr(self.model, function_name)
+        return self.jambi.model_func_push(function, **kwargs)
+
+    def query(self, query):
+        return self.jambi.query(self.model, query)
