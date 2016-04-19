@@ -100,6 +100,22 @@ class Jambi(object):
         model_instance = model.create(**kwargs)
         return model_instance
 
+    def grant_wish(self):
+        """ Grand a wish. """
+
+        from random import choice
+        rand_starts = [
+            "Mecca lecca hi, mecca hiney ho.",
+            "Wish? Did somebody say 'Wish'?"
+        ]
+        rand_finishes = [
+            "The wish has been granted. All hail Jambi!",
+            "The wish has been granted. Long live Jambi!"
+        ]
+        print choice(rand_starts)
+        print choice(rand_finishes)
+        return self
+
     def insert(self, model, **kwargs):
         """ Run Middleware on peewee's `insert` method. """
 
