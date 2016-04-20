@@ -3,6 +3,8 @@ import Models
 
 
 class JambiBase(object):
+    """ The base `Jambi` Object.  The actual `Jambi` class uses `JambiBase` as it's backbone. """
+
     def __init__(self):
         models_sub = [
             'BareField', 'BaseModel', 'BigIntegerField',
@@ -169,6 +171,9 @@ class JambiBase(object):
 
 class Jambi(object):
     def __init__(self, model):
+        if model.__class__.__name__ != 'BaseModel':
+            raise TypeError('`model` must be a peewee model instance or a `BaseModel` instance.')
+
         self.jambi = JambiBase()
         self.model = model
         self.do_atomic = False
