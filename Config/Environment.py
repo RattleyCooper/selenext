@@ -1,6 +1,11 @@
 from selenium import webdriver
 from peewee import *
 
+ENV_PATH = __file__\
+    .replace('Config\\', '.env')\
+    .replace('Environment.pyc', '')\
+    .replace('Environment.py', '')
+
 
 class ConfigLoader:
     """ Create a mapping of the  """
@@ -17,7 +22,7 @@ class ConfigLoader:
     def get(self, variable_name):
         return self.lines[variable_name]
 
-RESOURCE_LOADER = ConfigLoader()
+RESOURCE_LOADER = ConfigLoader(filepath=ENV_PATH)
 
 
 def env(variable_name):

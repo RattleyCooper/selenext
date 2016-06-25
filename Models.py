@@ -21,7 +21,7 @@ class BaseModel(Model):
 # The User model stores passwords for retrieval in case you need
 # to log in to a website.  It is not meant to store passwords
 # securely, but this can be accomplished by modifying the
-# `middleware/UserMiddleware.py` file if it is needed.
+# `Middleware/UserMiddleware.py` file if it is needed.
 class User(BaseModel):
     """ The basic User model """
 

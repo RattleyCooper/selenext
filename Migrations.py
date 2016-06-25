@@ -36,4 +36,5 @@ def migrate():
     db.create_tables(migrations)
     db.close()
 
-migrate()
+if __name__ == '__main__':
+    migrate()

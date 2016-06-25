@@ -24,6 +24,10 @@ and running site automations.
 """
 
 # todo: Have the .env file generate automatically and remove it from the repository.
+# todo: Possibility of removing Jambi, as I haven't actually used it in any real life scenarios yet.
+#       peewee and odbc work pretty well on their own.  That, and the fact that it is tightly coupled
+#       with the Middleware module, it really isn't worth keeping.  It's much simpler to just keep
+#       anything that the Middleware would do in the appropriate SiteAutomation.
 
 from time import sleep
 import Models
@@ -48,7 +52,7 @@ credentials = {
 user = jambi_user.model_func('get_or_create', **credentials)
 print user
 
-# This is where selenium starts up.  Use the environment helpers
+# This is where selenium starts up.  Use the environment Helpers
 # with the quitting context in order to ensure that the webdriver
 # shuts down properly.  Depending on how it errors out, you may
 # have to terminate lingering webdriver processes, however the
@@ -62,7 +66,7 @@ print user
 #
 with quitting(env_driver(env("BROWSER"))()) as driver:
     # Write your selenium code here.  Use Jambi to run peewee methods
-    # to take advantage of the middleware features, or just use peewee.
+    # to take advantage of the Middleware features, or just use peewee.
 
     # Here is an example of a `SiteAutomation` taken from the
     # `GoogleExample` site automation.  Check out the
