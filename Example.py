@@ -37,7 +37,6 @@ from Helpers.Database import Jambi
 from SiteAutomations import GoogleExample
 from selenium.webdriver.support.wait import WebDriverWait
 
-
 jambi_user = Jambi(Models.User)
 
 credentials = {
