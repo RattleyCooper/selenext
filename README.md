@@ -1,6 +1,10 @@
 # Slack
 Slack is a micro-framework for web scraping using selenium.  Multi-threading is supported.
 
+## Install
+
+Just download this as a .zip and then open it as a project in an IDE like PyCharm.
+
 ## Dependencies
 
 * [peewee](http://docs.peewee-orm.com/en/latest/)
