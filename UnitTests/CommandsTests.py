@@ -1,5 +1,5 @@
 import unittest
-from SiteAutomations import GoogleExample
+from SiteAutomations.Examples import GoogleExample
 from Helpers.Commands import ThreadedCommandManager
 
 
