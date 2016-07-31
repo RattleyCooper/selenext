@@ -1,13 +1,14 @@
 import unittest
+import Models
 from SiteAutomations.Examples import GoogleExample
-from Helpers.Commands import ThreadedCommandManager
+from Helpers.Commands import ThreadedCommandManager, Command
 
 
 class ThreadedCommandManagerTest(unittest.TestCase):
     def setUp(self):
         self.controllers = {
-            'goog1': GoogleExample.ThreadedGoogleSearch(),
-            'goog2': GoogleExample.ThreadedGoogleSearch()
+            'goog1': GoogleExample.ThreadedGoogleSearch(Models),
+            'goog2': GoogleExample.ThreadedGoogleSearch(Models)
         }
 
         self.cmd = ThreadedCommandManager(self.controllers, False)
@@ -33,12 +34,19 @@ class ThreadedCommandManagerTest(unittest.TestCase):
             'goog1': ('hello',),
             'goog2': ('hello world!',)
         }
-        self.assertEqual(self.cmd.create_threads(_, command_pack), self.cmd)
+        self.assertIsInstance(self.cmd.create_threads(_, command_pack), Command)
 
     def tearDown(self):
         for k, controller in self.cmd.controllers.iteritems():
             controller.driver.close()
-            controller.driver.quit()
+            try:
+                controller.driver.quit()
+            except AttributeError:
+                pass
+
+
+def main():
+    unittest.main()
 
 if __name__ == '__main__':
-    unittest.main()
+    main()

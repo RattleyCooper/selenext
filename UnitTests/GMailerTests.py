@@ -22,5 +22,9 @@ class GmailerTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-if __name__ == '__main__':
+
+def main():
     unittest.main()
+
+if __name__ == '__main__':
+    main()
