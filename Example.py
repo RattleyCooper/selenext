@@ -9,17 +9,16 @@ Once you have defined your models, they are accessed using the
 """
 
 from time import sleep
+# Database models used to interact with databases.
 import Models
+# The environment variable loader.  These variables can be set in the .env file.
 from Config.Environment import env, env_driver
+# Controllers are kept in the SiteAutomations folder.
+from SiteAutomations.Examples import GoogleExample, BingExample
 from Helpers.Contexts import quitting
-from SiteAutomations import GoogleExample
 from selenium.webdriver.support.wait import WebDriverWait
 
-# This is where selenium starts up.  Use the environment Helpers
-# with the quitting context in order to ensure that the webdriver
-# shuts down properly.  Depending on how it errors out, you may
-# have to terminate lingering webdriver processes, however the
-# quitting context should `close` and `quit` the driver.
+# This is where selenium starts up.
 # This could be written as:
 #
 #   browser = env("BROWSER")
@@ -31,18 +30,15 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     # Write your selenium code here.
 
     # Here is an example of a `SiteAutomation` taken from the
-    # `GoogleExample` site automation.  Check out the
-    # `GoogleExample.py` file to find out how to use
-    # the advanced filtering techniques that the
-    # Validation module provides.
+    # `GoogleExample.py` file.
     wait = WebDriverWait(driver, 30)
+    # Pass the web driver to the site automation along with anything
+    # else it might need to do its job. This could include an
+    # instance of WebDriverWait, and even the collection of
+    # Models.
     google_search = GoogleExample.GoogleSearch(driver, wait, Models)
-    google_search.perform_search('google wiki')
+    bing_search = BingExample.BingSearch(driver, wait, Models)
+    google_search.do_search('google wiki')
     sleep(1)
-
-    # The `scrape_wikipedia_href_results` method contains an example
-    # of using the `WebElementFilter` class to do advanced filtering.
-    results = google_search.scrape_wikipedia_href_results()
-    print results
-    sleep(2)
-    pass
+    bing_search.do_search('bing wiki')
+    sleep(1)
