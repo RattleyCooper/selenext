@@ -28,8 +28,10 @@ Just download this as a .zip and then open it as a project in an IDE like PyChar
 Once you have the dependencies, you can download this repository and start using it as is, however you may want to read over the
 documentation below.
 
+## Examples
+
 _There is an [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows exactly what an application looks like when utilizing the `Slack`
-framework.  `Example.py` can be used as a template.  There is also an [`ThreadedExample.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows how to
+framework.  `Example.py` can be used as a template.  There is also an [`ThreadedExample.py`](https://github.com/Wykleph/Slack/blob/master/ThreadedExample.py) file that shows how to
 create a multithreaded automation._
 
 ## [.env](https://github.com/Wykleph/Slack/blob/master/.env) File
