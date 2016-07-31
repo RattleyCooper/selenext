@@ -2,8 +2,7 @@
 Slack is a micro-framework for scraping the web using selenium.
 Written by Wykleph in April of 2016.
 
-Create models using `python genesis.py make:model ModelName.
-The models are appended to the `Models.py` file.
+Create models in the `Models.py` file.
 
 Once you have defined your models, they are accessed using the
 `Models.ModelName` syntax.
