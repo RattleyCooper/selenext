@@ -1,4 +1,5 @@
 from Config.Environment import env, env_driver
+from Helpers import DummyLogger
 import threading
 
 
@@ -40,7 +41,7 @@ class ThreadedCommandManager(object):
             self.logger = logger
         else:
             # This will just print the logged stuff to the console.
-            self.logger = self
+            self.logger = DummyLogger()
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
@@ -49,18 +50,6 @@ class ThreadedCommandManager(object):
             self.logger.info('Attaching drivers.')
             self._attach_drivers()
             self.logger.info('Drivers attached.')
-
-    def info(self, something):
-        return self
-
-    def warn(self, something):
-        return self
-
-    def error(self, something):
-        return self
-
-    def debug(self, something):
-        return self
 
     def _attach_drivers(self):
         """
@@ -151,21 +140,9 @@ class Command(object):
             self.logger = logger
         else:
             # This will just print the logged stuff to the console.
-            self.logger = self
+            self.logger = DummyLogger()
 
         self.thread_pool = thread_pool
-
-    def info(self, something):
-        return self
-
-    def warn(self, something):
-        return self
-
-    def error(self, something):
-        return self
-
-    def debug(self, something):
-        return self
 
     def start_threads(self, dump_threads=True, join_threads=True):
         self.logger.info('Starting threads.')
