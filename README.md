@@ -1,3 +1,4 @@
+<span style="text-align: center;">
 ```python
 """
       ___           ___       ___           ___           ___
@@ -13,6 +14,7 @@
      \/__/         \/__/     \/__/         \/__/         \|__|
                                                                 """
 ```
+</span>
 Slack is a micro-framework for web scraping using selenium.  Multi-threading is supported.
 
 ## Install
