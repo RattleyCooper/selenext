@@ -4,7 +4,7 @@ import threading
 
 class ThreadedCommandManager(object):
     """
-    Used for running threaded commands.  Each controller must use a separate instance of WebDriver.
+    Used for creating threaded commands.  Each controller must use a separate instance of WebDriver.
 
     Example:
         controllers = {
@@ -16,14 +16,16 @@ class ThreadedCommandManager(object):
     def __init__(self, controllers, logging, attach_drivers=True, wait_timeout=30, log_file='multithread_log.txt'):
         if type(controllers) != dict:
             raise TypeError('controllers must be a dictionary of controllers.')
-
+        self.attach_drivers = attach_drivers
+        self.log_file = log_file
+        self.logging_val = logging
         if logging:
             # Set up the logger #
             logging.basicConfig(level=logging.DEBUG)
             logger = logging.getLogger(ThreadedCommandManager.__name__)
 
             # Create log handler for writing to file. #
-            handler = logging.FileHandler(log_file)
+            handler = logging.FileHandler(self.log_file)
             handler.setLevel(logging.DEBUG)
 
             # Create a logging format. #
@@ -49,19 +51,15 @@ class ThreadedCommandManager(object):
             self.logger.info('Drivers attached.')
 
     def info(self, something):
-        print something
         return self
 
     def warn(self, something):
-        print something
         return self
 
     def error(self, something):
-        print something
         return self
 
     def debug(self, something):
-        print something
         return self
 
     def _attach_drivers(self):
@@ -73,6 +71,19 @@ class ThreadedCommandManager(object):
         for key, args in self.controllers.iteritems():
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
+
+    def shutdown(self):
+        """
+        Shut down teh WebDriver instances.
+
+        :return:
+        """
+        for key, controller in self.controllers.iteritems():
+            controller.driver.close()
+            try:
+                controller.driver.quit()
+            except AttributeError:
+                pass
 
     def create_threads(self, target, command_pack):
         """
@@ -109,9 +120,54 @@ class ThreadedCommandManager(object):
             args = (self.controllers[key],) + args
             thread = threading.Thread(target=target, args=args)
             self.thread_pool.append(thread)
+
+        thread_pool = self.thread_pool
+        self.thread_pool = []
+
+        return Command(self.logging_val, thread_pool, self.log_file)
+
+
+class Command(object):
+    def __init__(self, logging, thread_pool, log_file='command_log.txt'):
+        self.log_file = log_file
+        if logging:
+            # Set up the logger #
+            logging.basicConfig(level=logging.DEBUG)
+            logger = logging.getLogger(Command.__name__)
+
+            # Create log handler for writing to file. #
+            handler = logging.FileHandler(self.log_file)
+            handler.setLevel(logging.DEBUG)
+
+            # Create a logging format. #
+            formatter = logging.Formatter(
+                '%(asctime)s - %(name)s.%(levelname)s: %(message)s',
+                datefmt='%m-%d-%Y %H:%M:%S'
+            )
+            handler.setFormatter(formatter)
+
+            # Add the handlers to the logger.
+            logger.addHandler(handler)
+            self.logger = logger
+        else:
+            # This will just print the logged stuff to the console.
+            self.logger = self
+
+        self.thread_pool = thread_pool
+
+    def info(self, something):
         return self
 
-    def start_threads(self, dump_threads=False, join_threads=True):
+    def warn(self, something):
+        return self
+
+    def error(self, something):
+        return self
+
+    def debug(self, something):
+        return self
+
+    def start_threads(self, dump_threads=True, join_threads=True):
         self.logger.info('Starting threads.')
         for thread in self.thread_pool:
             thread.start()
@@ -123,18 +179,6 @@ class ThreadedCommandManager(object):
         if dump_threads:
             self.logger.debug('Dumping threads.')
             self.dump_threads()
-        return self
-
-    def dump_thread(self, thread):
-        """
-        Remove a thread from the pool of threads.
-
-        :param thread:
-        :return:
-        """
-        self.logger.info('Removing thread.')
-        self.thread_pool.remove(thread)
-        self.logger.info('Thread removed.')
         return self
 
     def dump_threads(self):
