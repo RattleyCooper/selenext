@@ -5,4 +5,7 @@ from contextlib import contextmanager
 def quitting(thing):
     yield thing
     thing.close()
-    thing.quit()
+    try:
+        thing.quit()
+    except AttributeError:
+        pass
