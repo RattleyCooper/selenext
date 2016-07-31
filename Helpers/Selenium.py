@@ -2,6 +2,7 @@ from selenium.common.exceptions import TimeoutException
 from Config.Environment import env
 
 
+# todo: Remove custom waits.  There has to be a better way of doing this.
 class CustomWait(object):
     def __init__(self, wait, mailer, tries=3):
         self.wait = wait
