@@ -8,8 +8,6 @@ Once you have defined your models, they are accessed using the
 `Models.ModelName` syntax.
 """
 
-# todo: Have the .env file generate automatically and remove it from the repository.
-
 from time import sleep
 import Models
 from Config.Environment import env, env_driver
