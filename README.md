@@ -1,48 +1,5 @@
 # Slack
-Slack is a micro-framework for simple web scraping using selenium.  A lot about how the framework operates was inspired by the
-Laravel framework(PHP), which is used for created web-applications.
-
-## About
-
-One of the benefits of using `Slack` is the ability to run middleware on your `peewee` models using [`Jambi`](https://github.com/Wykleph/Slack/blob/master/Helpers/Database.py).  `Jambi` uses reflection
-to find middleware and runs the appropriate middleware methods automatically.  This takes care of data manipulation on the database
-side of things pretty well.  The idea of [`SiteAutomations`](https://github.com/Wykleph/Slack/tree/master/SiteAutomations) was also implemented to give a command-like structure to your automation
-flow.  Writing all of your automations inside of a `SiteAutomation` keeps things modular and neatly organized.  There are also
-helper methods for filtering web elements returned by `Selenium`'s `find_elements` method(more on that later).
-
-You end up with a pretty clean area for piecing together your automations:
-
-```python
-from time import sleep
-import Models
-from Config.Environment import env, env_driver
-from Helpers.Contexts import quitting
-from Helpers.Database import Jambi
-
-# `SiteAutomations` holds the code that drives selenium's `WebDriver` instance. Create a
-# file and class in the `SiteAutomations` folder for each site you are automating. In
-# this example we are using methods from `SiteAutomations.GoogleExample`'s `Search`
-# class, but we are importing all of `GoogleExample`.
-from SiteAutomations import GoogleExample
-
-# More on `Jambi` later.
-jambi = Jambi()
-
-# Use a different browser by modifying your `.env` file.
-with quitting(env_driver(env("BROWSER"))()) as driver:
-    google_search = GoogleExample.Search(driver, jambi)
-
-    # Do Search
-    google_search.perform_search('google wiki')
-    sleep(1)
-
-    # Do scrape
-    results = google_search.scrape_wikipedia_href_results()
-    print results
-    sleep(5)
-```
-
-_Check out the [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file for more detailed documentation on the workflow_
+Slack is a micro-framework for web scraping using selenium.  Multi-threading is supported.
 
 ## Dependencies
 
@@ -54,7 +11,8 @@ Once you have the dependencies, you can download this repository and start using
 documentation below.
 
 _There is an [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows exactly what an application looks like when utilizing the `Slack`
-framework.  `Example.py` can be used as a template._
+framework.  `Example.py` can be used as a template.  There is also an [`ThreadedExample.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows how to
+create a multithreaded automation._
 
 ## [.env](https://github.com/Wykleph/Slack/blob/master/.env) File
 
@@ -64,7 +22,6 @@ holds options for your application.  _Note: Load your `WebDriver` instance using
 
 The default [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file looks like this:
 ```python
-# Note the lack of quotes.  Don't use quotes when setting these options.
 # Browsers: chrome, firefox, safari, phantomjs, opera
 BROWSER=chrome
 
@@ -75,6 +32,14 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_USERNAME=None
 DB_PASSWORD=None
+
+# Admin Settings
+ADMIN_EMAIL=None
+
+GMAIL_USERNAME=none
+GMAIL_PASSWORD=none
+GMAIL_HOST=smtp.gmail.com
+GMAIL_PORT=587
 ```
 You can tell `Selenium` which browser to use, and you can tell `peewee` all the information about how to connect to your
 database.
@@ -82,21 +47,9 @@ database.
 You can manually set any key/value you do not want to show up in version control inside the [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file, then use the
 `env` helper function located in [`Config.Environment`](https://github.com/Wykleph/Slack/blob/master/Config/Environment.py) to retrieve the values later.
 
-## Creating Models and Middleware using [genesis.py](https://github.com/Wykleph/Slack/blob/master/genesis.py)
+## Creating Models
 
-### Models
 Models are defined based on `peewee` models, so [check out how to use them](http://docs.peewee-orm.com/en/latest/peewee/models.html)..
-
-Create models using [genesis.py](https://github.com/Wykleph/Slack/blob/master/genesis.py), with the following syntax, from the command line:
-
-`python genesis.py make:model ModelName`.
-
-If you are on windows, it might look something like:
-
-`c:/python27/python.exe c:/path/to/genesis.py make:model ModelName`.
-
-The models are appended to the [`Models.py`](https://github.com/Wykleph/Slack/blob/master/Models.py) file, and any changes to `peewee` models can be made in the `Models.py`
-file. __This will probably change to operate similar to the middleware classes in the future.__
 
 Once you have defined your models, they are accessed using the `Models.ModelName` syntax.
 
@@ -107,120 +60,7 @@ for now.  Database seeding will be implemented in the near future, however you c
 database tables based on the models you defined in `Models.py`.  The [`Migrations.py`](https://github.com/Wykleph/Slack/blob/master/Migrations.py) file will use reflection to load
 the model attributes and create the tables for you.
 
-To run migrations, use the following syntax:
-
-`python genesis.py run:migrations`
-
-You can also run the [`Migrations.py`](https://github.com/Wykleph/Slack/blob/master/Migrations.py) file by itself.  Either way will run migrations for all of your defined models.
-
-### Middleware & Jambi
-
-A piece of middleware is defined based on the name of the model the middleware should operate on.  It's only
-purpose it to modify data before it is entered into the database, or modify data after it is pulled from the
-database.
-
-Middleware for the models is generated when you create a model with [`genesis.py`](https://github.com/Wykleph/Slack/blob/master/genesis.py) and the files can be found in the
-`Middleware` folder.  Methods are automatically generated for each attribute that is defined on a model and if you
-use the database helper, [`Jambi`](https://github.com/Wykleph/Slack/blob/master/Helpers/Database.py), to run your model methods, the middleware will run automatically(Example later).
-
-Middleware for a generated model looks like this(without the example value modifications/comments I added):
-
-```python
-from Middleware import Middleware
-
-
-class UserMiddleware(Middleware):
-  # Whenever User data is added to the database, the attribute's `set_attribute` method will be called.
-  def set_created_at(self, value):
-      if value == '':
-        value = 'False'
-      return value
-
-  # Whenever User data is pulled, the attribute's `get_attribute` method will be called on the result.
-  def get_created_at(self, value):
-      if value == 'False':
-        value = False
-      return value
-```
-
-This is because a generated model only has a `created_at` attribute. If we ran `genesis.py make:model User --no-middleware`,
-we could add attributes to our model, then run `genesis.py make:middleware User` to create the base middleware for our `User`
-model.  Also, as you can see, the syntax for any middleware method is either `set_` + the attribute name, if you want data
-to be modified going in, and `get_` + attribute name if you want data to be modified coming out of the database.
-
-#### Jambi
-
-The way we run middleware is by passing the model's method name, along with the data to one of `Jambi`'s
-methods.  Example:
-
-```python
-# pull in appropriate modules / packages.
-import Models
-from Helpers.Database import Jambi
-
-jambi_user = Jambi(Models.User)
-credentials = {
-  'username': 'SomeGuyNamedBobby',
-  'email': 'bobby@domain.com',
-  'password': 'password_for_site'
-}
-user = jambi_user.model_func('get_or_create', **credentials)
-print user
-```
-
-If you only want to modify data when writing to the database, use `jambi_user.model_func_in`.  If you only want to
-modify data coming out of the database, use `jambi_user.model_func_out`.
-
-##### Queries in Jambi
-
-By default, only data coming out of the database is modified with middleware when using `jambi.query`.
-
-To perform a query, build your query like you normally would in `peewee`, then use the `jambi.query` method
-instead of calling `execute()` on the query object.
-
-```python
-import Models
-from Helpers.Database import Jambi
-
-jambi_user = Jambi(Models.User)
-query = Models.User.select().where(Models.User.username == 'SomeUser123')
-results = jambi_user.query(query)
-
-```
-
-You can `create` and `insert` records individually...
-
-```python
-import Models
-from Helpers.Database import Jambi
-
-jambi_user = Jambi(Models.User)
-user1 = {'username': 'bob123', 'email':'bob123@mail.mail', 'password':'123Bob'}
-user2 = {'username': 'jim123', 'email':'jim123@mail.mail', 'password':'123Jim'}
-# pass the user information as **kwargs
-user1_obj = jambi_user.create(**user1)
-user2_obj = jambi_user.insert(**user2)
-```
-
-or you can use `jambi_user.insert_many` to insert many records.  You can add `jambi_user.atomic` to the method chain to take
-advantage of `peewee`'s atomic inserts.
-
-```python
-import Models
-from Helpers.Database import Jambi
-
-jambi_user = Jambi(Models.User)
-
-users = [
-    {'username': 'bob123', 'email':'bob123@mail.mail', 'password':'123Bob'},
-    {'username': 'jim123', 'email':'jim123@mail.mail', 'password':'123Jim'}
-]
-
-jambi_user.atomic().insert_many(users)
-```
-
-_Note:  It's important to test the data you get back from `Jambi` since it will return a `peewee` model instance,
-a `dict` or a `boolean`.  Wishes are granted, but the outcome isn't always what you might expect._
+Just run the `Migrations.py` file to run your migrations.
 
 ## Filtering `WebElement` Instances
 
