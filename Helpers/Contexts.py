@@ -11,6 +11,7 @@ def quitting(thing):
     """
 
     yield thing
+
     thing.close()
     try:
         thing.quit()

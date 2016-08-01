@@ -1,6 +1,8 @@
 # Python compiled files
 *.pyc
 
+*.log
+
 # Databases
 *.db
 
