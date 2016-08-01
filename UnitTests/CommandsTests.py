@@ -1,7 +1,8 @@
 import unittest
-import Models
-from SiteAutomations.Examples import GoogleExample
+
 from Helpers.Commands import ThreadedCommandManager, Command
+from SiteAutomations.Examples import GoogleExample
+from Project import Models
 
 
 class ThreadedCommandManagerTest(unittest.TestCase):

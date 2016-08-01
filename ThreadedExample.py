@@ -10,7 +10,7 @@ Once you have defined your models, they are accessed using the
 
 from time import sleep
 # Database models used to interact with databases.
-import Models
+from Project import Models
 # Controllers are kept in the SiteAutomations folder.
 from SiteAutomations.Examples import GoogleExample, BingExample
 from Helpers.Commands import ThreadedCommandManager
