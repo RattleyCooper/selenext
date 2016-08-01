@@ -40,7 +40,6 @@ class ThreadedCommandFactory(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            # This will just print the logged stuff to the console.
             self.logger = DummyLogger()
 
         self.controllers = controllers
@@ -112,9 +111,10 @@ class ThreadedCommandFactory(object):
             thread = threading.Thread(target=target, args=args)
             self.thread_pool.append(thread)
 
+        # Swap variables.
         thread_pool, self.thread_pool = self.thread_pool, []
 
-        return Command(self.logging_val, thread_pool, self.log_file)
+        return Command(self.logging_val, thread_pool, log_file=self.log_file)
 
 
 class Command(object):
@@ -140,7 +140,6 @@ class Command(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            # This will just print the logged stuff to the console.
             self.logger = DummyLogger()
 
         self.thread_pool = thread_pool
