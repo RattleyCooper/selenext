@@ -13,14 +13,14 @@ from time import sleep
 from Project import Models
 # Controllers are kept in the SiteAutomations folder.
 from SiteAutomations.Examples import GoogleExample, BingExample
-from Helpers.Commands import ThreadedCommandManager
+from Helpers.Commands import ThreadedCommandFactory
 
 # Define some controllers to pass to ThreadedCommandManager.
 controllers = {
     'google': GoogleExample.ThreadedGoogleSearch(Models),
     'bing': BingExample.ThreadedBingSearch(Models)  # Check out the example files for more info on threading.
 }
-cmd_mgr = ThreadedCommandManager(controllers, False)
+cmd_mgr = ThreadedCommandFactory(controllers, False)
 
 # Register arguments to pass to each controller.  They are
 # matched by the key in the controllers dictionary.

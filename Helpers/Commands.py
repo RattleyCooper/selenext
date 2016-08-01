@@ -3,7 +3,7 @@ from Helpers import DummyLogger
 import threading
 
 
-class ThreadedCommandManager(object):
+class ThreadedCommandFactory(object):
     """
     Used for creating threaded commands.  Each controller must use a separate instance of WebDriver.
 
@@ -23,7 +23,7 @@ class ThreadedCommandManager(object):
         if logging:
             # Set up the logger #
             logging.basicConfig(level=logging.DEBUG)
-            logger = logging.getLogger(ThreadedCommandManager.__name__)
+            logger = logging.getLogger(ThreadedCommandFactory.__name__)
 
             # Create log handler for writing to file. #
             handler = logging.FileHandler(self.log_file)
