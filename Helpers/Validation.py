@@ -28,25 +28,45 @@ class WebElementFilter(object):
         self._attribute_search = False
 
     def _reset(self):
-        """ Reset the variables used to perform matches. """
+        """
+        Reset the variables used to perform matches.
+
+        :return:
+        """
 
         self._inner_text_search = False
         self._attribute_search = False
 
     def attribute(self, attr):
-        """ Set up an attribute to match. """
+        """
+        Set up an attribute to match.
+
+        :param attr:
+        :return:
+        """
 
         self._attribute_search = attr
         return self
 
     def inner_text(self):
-        """ Test against the inner text of an element. """
+        """
+        Test against the inner text of an element.
+
+        :return:
+        """
 
         self._inner_text_search = True
         return self
 
     def wildcard_match(self, element, pattern, attr_name=False):
-        """ Check to see if an attribute matches a wildcard expression. """
+        """
+        Check to see if an attribute matches a wildcard expression.
+
+        :param element:
+        :param pattern:
+        :param attr_name:
+        :return:
+        """
 
         attr_value = ''
 
@@ -102,7 +122,14 @@ class WebElementFilter(object):
         return True
 
     def regex_match(self, element, pattern, attr_name=False):
-        """ Check to see if an attribute matches a regular expression. """
+        """
+        Check to see if an attribute matches a regular expression.
+
+        :param element:
+        :param pattern:
+        :param attr_name:
+        :return:
+        """
 
         attr_value = ''
 
@@ -155,7 +182,12 @@ class WebElementFilter(object):
         return True
 
     def _prepare_wildcard_pattern(self, pat):
-        """ Prepare a regex patter for a wildcard expression. The * operator is supported. """
+        """
+        Prepare a regex patter for a wildcard expression. The * operator is supported.
+
+        :param pat:
+        :return:
+        """
 
         pat = pat.replace('*', '.*')
         special_chars = self._regex_special_wildcard_chars
