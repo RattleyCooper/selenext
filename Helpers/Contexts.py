@@ -14,5 +14,5 @@ def quitting(thing):
     thing.close()
     try:
         thing.quit()
-    except AttributeError:
+    except Exception:
         pass

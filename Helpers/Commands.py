@@ -72,7 +72,7 @@ class ThreadedCommandFactory(object):
             controller.driver.close()
             try:
                 controller.driver.quit()
-            except AttributeError:
+            except Exception:
                 pass
 
     def create_threads(self, target, command_pack):
