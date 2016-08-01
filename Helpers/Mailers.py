@@ -3,6 +3,9 @@ from email.mime.text import MIMEText
 
 
 class GMailer:
+    """
+    Send emails using Gmail.
+    """
     def __init__(self, username, password, host, port):
         if type(username) != str and type(username) != unicode:
             raise TypeError('A string was expected for the username variable.')
@@ -19,6 +22,15 @@ class GMailer:
         self.port = port
 
     def send_email(self, emails, subject, the_msg):
+        """
+        Send an email.
+
+        :param emails:
+        :param subject:
+        :param the_msg:
+        :return:
+        """
+
         email_list = emails.split(',')
         email_list = [email.strip() for email in email_list]
 
@@ -40,6 +52,15 @@ class GMailer:
         return self
 
     def send_email_with_attachment(self, emails, filepath, subject):
+        """
+        Send an email with an attachment.
+
+        :param emails:
+        :param filepath:
+        :param subject:
+        :return:
+        """
+
         email_list = emails.split(',')
         email_list = [email.strip() for email in email_list]
 
