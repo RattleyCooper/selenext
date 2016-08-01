@@ -57,6 +57,7 @@ class ThreadedCommandFactory(object):
 
         :return:
         """
+
         for key, args in self.controllers.iteritems():
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
@@ -67,6 +68,7 @@ class ThreadedCommandFactory(object):
 
         :return:
         """
+
         for key, controller in self.controllers.iteritems():
             controller.driver.close()
             try:
@@ -93,8 +95,8 @@ class ThreadedCommandFactory(object):
             'google': ('google_username', 'google_password'),
             'bing': ('bing_username', 'bing_password')
         }
-        m.create_threads(do_login, do_login_command)
-        m.start_threads()
+        cmd = m.create_threads(do_login, do_login_command)
+        cmd.start_threads()
 
         :param target:
         :param command_pack:
@@ -144,6 +146,14 @@ class Command(object):
         self.thread_pool = thread_pool
 
     def start_threads(self, dump_threads=True, join_threads=True):
+        """
+        Start the threads in the thread pool.
+
+        :param dump_threads:
+        :param join_threads:
+        :return:
+        """
+
         self.logger.info('Starting threads.')
         for thread in self.thread_pool:
             thread.start()
@@ -158,6 +168,12 @@ class Command(object):
         return self
 
     def dump_threads(self):
+        """
+        Remove the threads from the thread pool.
+
+        :return:
+        """
+
         self.thread_pool = []
         self.logger.info('Threads dumped, 0 threads in pool.')
         return self
