@@ -1,6 +1,6 @@
 import unittest
 
-from Helpers.Commands import ThreadedCommandManager, Command
+from Helpers.Commands import ThreadedCommandFactory, Command
 from SiteAutomations.Examples import GoogleExample
 from Project import Models
 
@@ -12,7 +12,7 @@ class ThreadedCommandManagerTest(unittest.TestCase):
             'goog2': GoogleExample.ThreadedGoogleSearch(Models)
         }
 
-        self.cmd = ThreadedCommandManager(self.controllers, False)
+        self.cmd = ThreadedCommandFactory(self.controllers, False)
 
     def test_command_manager_attributes(self):
         self.assertEqual(type(self.cmd.controllers), dict)
