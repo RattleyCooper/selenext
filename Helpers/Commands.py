@@ -110,8 +110,7 @@ class ThreadedCommandManager(object):
             thread = threading.Thread(target=target, args=args)
             self.thread_pool.append(thread)
 
-        thread_pool = self.thread_pool
-        self.thread_pool = []
+        thread_pool, self.thread_pool = self.thread_pool, []
 
         return Command(self.logging_val, thread_pool, self.log_file)
 
