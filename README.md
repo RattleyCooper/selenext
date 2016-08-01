@@ -78,7 +78,7 @@ Once you have defined your models, they are accessed using the `Models.ModelName
 
 A migration is basically just a way of saying, "create the tables in the database based on our defined models", at least
 for now.  Database seeding will be implemented in the near future, however you can run basic migrations to recreate your
-database tables based on the models you defined in `Models.py`.  The [`Migrations.py`](https://github.com/Wykleph/Slack/blob/master/Migrations.py) file will use reflection to load
+database tables based on the models you defined in [`Project/Models.py`](https://github.com/Wykleph/Slack/blob/master/Project/Models.py).  The [`Project/Migrations.py`](https://github.com/Wykleph/Slack/blob/master/Migrations.py) file will use reflection to load
 the model attributes and create the tables for you.
 
 Just run the `Migrations.py` file to run your migrations.
