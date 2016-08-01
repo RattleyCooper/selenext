@@ -24,6 +24,7 @@ Just download this as a .zip and then open it as a project in an IDE like PyChar
 * [peewee](http://docs.peewee-orm.com/en/latest/)
 `pip install peewee`
 * [selenium python bindings](http://selenium-python.readthedocs.org/)
+`pip install selenium`
 
 Once you have the dependencies, you can download this repository and start using it as is, however you may want to read over the
 documentation below.
