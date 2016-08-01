@@ -2,6 +2,10 @@ import Models
 
 
 def migrate():
+    """
+    Run database migrations for the defined models.
+    :return:
+    """
     models_pieces = [
         'BareField', 'BigIntegerField', 'BinaryField', 'BlobField',
         'BooleanField', 'CharField', 'Check', 'Clause', 'CompositeKey',
