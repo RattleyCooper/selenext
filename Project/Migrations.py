@@ -1,3 +1,6 @@
+"""
+This file is used to migrate database tables to the database.
+"""
 import Models
 
 
