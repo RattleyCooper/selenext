@@ -32,8 +32,8 @@ documentation below.
 
 _There is an [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows what the master controller of an application looks like when utilizing the `Slack`
 framework.  `Example.py` can be used as a template.  There is also a [`ThreadedExample.py`](https://github.com/Wykleph/Slack/blob/master/ThreadedExample.py) file that shows how to
-create a multithreaded automations.  [SiteAutomations](https://github.com/Wykleph/Slack/tree/master/SiteAutomations/Examples) are like controllers that control how to interact with each web site.
-The SiteAutomations do most of the heavy lifting._
+create a multithreaded automations.  Threaded automations allow multiple browsers to work on jobs at the same time, so your automations can get work done quicker!  [SiteAutomations](https://github.com/Wykleph/Slack/tree/master/SiteAutomations/Examples) are like controllers that control how to interact with each web site.
+The SiteAutomations do most of the heavy lifting, so check out the examples._
 
 ## [.env](https://github.com/Wykleph/Slack/blob/master/.env) File
 
