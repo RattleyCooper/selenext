@@ -16,8 +16,6 @@ from Config.Environment import env, env_driver
 # Controllers are kept in the SiteAutomations folder.
 from SiteAutomations.Examples import GoogleExample, BingExample
 from Helpers.Contexts import quitting
-# Pull in the command factory for the second example.
-from Helpers.Commands import CommandFactory
 from selenium.webdriver.support.wait import WebDriverWait
 
 # This is where selenium starts up.
@@ -44,37 +42,3 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     sleep(1)
     bing_search.do_search('bing wiki')
     sleep(1)
-
-# Optionally, you can use the command manager to do the searches.
-# This will make each controller use it's own personal WebDriver.
-# Define some controllers to pass to CommandFactory.
-# Note that the controllers being used are subclasses of IndependentController.
-# These classes don't handle any threading, but they are set up so that the
-# command factory will be able to create commands with them.
-controllers = {
-    'google': GoogleExample.ThreadedGoogleSearch(Models),
-    'bing': BingExample.ThreadedBingSearch(Models)  # Check out the example files for more info on threading.
-}
-cmd_factory = CommandFactory(controllers, logging=False)
-
-# Register arguments to pass to each controller.  They are
-# matched by the key in the controllers dictionary.
-search_command = {
-    'google': ('star wars',),
-    'bing': ('star wars',)
-}
-
-# Create the command.  Pass a function as the first parameter and
-# the command pack as the second parameter.  A Command instance
-# is returned when the command is created.  These Command
-# objects are used to start the work!
-cmd = cmd_factory.create_command(lambda controller, search_term: controller.do_search(search_term), search_command)
-
-# Start the command.  Each search will be executed one after the
-# other.
-cmd.start()
-print 'finished first search'
-sleep(5)
-
-# Close the WebDrivers down.
-cmd_factory.shutdown()

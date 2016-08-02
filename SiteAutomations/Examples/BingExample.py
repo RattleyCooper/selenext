@@ -1,6 +1,6 @@
 from time import sleep
 from random import randint
-from Helpers.Controllers import IndependentController
+from Helpers.Controllers import ThreadedController
 
 
 def _do_search(driver, wait, search_term):
@@ -35,7 +35,7 @@ class BingSearch(object):
         return _do_search(self.driver, self.wait, search_term)
 
 
-class ThreadedBingSearch(IndependentController):
+class ThreadedBingSearch(ThreadedController):
     def __init__(self, models):
         self.models = models
 

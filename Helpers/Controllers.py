@@ -2,7 +2,7 @@ from datetime import datetime
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-class IndependentController(object):
+class ThreadedController(object):
     """
     The base class for a threaded controller setup.
     """

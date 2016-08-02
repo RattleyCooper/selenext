@@ -1,10 +1,20 @@
 from Config.Environment import env, env_driver
-from Helpers import DummyLogger, DummyThread
+from Helpers import DummyLogger
 import threading
 
 
-class BaseCommandFactory(object):
-    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, log_file='main_log.txt'):
+class ThreadedCommandFactory(object):
+    """
+    Used for creating threaded commands.  Each controller must use a separate instance of WebDriver.
+
+    Example:
+        controllers = {
+            'google': google_controller,
+            'yahoo': yahoo_controller
+        }
+        thread_manager = ThreadedControllerManager(controllers, attach_drivers=True)
+    """
+    def __init__(self, controllers, logging, attach_drivers=True, wait_timeout=30, log_file='multithread_log.txt'):
         if type(controllers) != dict:
             raise TypeError('controllers must be a dictionary of controllers.')
         self.attach_drivers = attach_drivers
@@ -34,7 +44,7 @@ class BaseCommandFactory(object):
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
-        self.pool = []
+        self.thread_pool = []
         if attach_drivers:
             self.logger.info('Attaching drivers.')
             self._attach_drivers()
@@ -65,20 +75,7 @@ class BaseCommandFactory(object):
             except Exception:
                 pass
 
-
-class ThreadedCommandFactory(BaseCommandFactory):
-    """
-    Used for creating threaded commands.  Each controller must use a separate instance of WebDriver.
-
-    Example:
-        controllers = {
-            'google': google_controller,
-            'yahoo': yahoo_controller
-        }
-        thread_manager = ThreadedControllerManager(controllers, attach_drivers=True)
-    """
-
-    def create_command(self, target, command_pack):
+    def create_threads(self, target, command_pack):
         """
         Create threads for the given target function.  The command pack is used to provide args
         to the target function.
@@ -112,40 +109,16 @@ class ThreadedCommandFactory(BaseCommandFactory):
         for key, args in command_pack.iteritems():
             args = (self.controllers[key],) + args
             thread = threading.Thread(target=target, args=args)
-            self.pool.append(thread)
+            self.thread_pool.append(thread)
 
         # Swap variables.
-        thread_pool, self.pool = self.pool, []
+        thread_pool, self.thread_pool = self.thread_pool, []
 
         return Command(self.logging_val, thread_pool, log_file=self.log_file)
 
 
-class CommandFactory(BaseCommandFactory):
-    def create_command(self, target, command_pack):
-        """
-        Create a command that will execute jobs one by one.
-
-        :param target:
-        :param command_pack:
-        :return:
-        """
-
-        if type(command_pack) != dict:
-            raise TypeError('Expected a dictionary for the command_pack variable.')
-
-        self.logger.info('Creating command.')
-        for key, args in command_pack.iteritems():
-            args = (self.controllers[key],) + args
-            thread = DummyThread(target=target, args=args)
-            self.pool.append(thread)
-
-        pool, self.pool = self.pool, []
-
-        return Command(self.logging_val, pool, log_file=self.log_file)
-
-
 class Command(object):
-    def __init__(self, logging, pool, log_file='command_log.txt'):
+    def __init__(self, logging, thread_pool, log_file='command_log.txt'):
         self.log_file = log_file
         if logging:
             # Set up the logger #
@@ -169,36 +142,37 @@ class Command(object):
         else:
             self.logger = DummyLogger()
 
-        self.pool = pool
+        self.thread_pool = thread_pool
 
-    def start(self, dump_pool=True, join_threads=True):
+    def start_threads(self, dump_threads=True, join_threads=True):
         """
         Start the threads in the thread pool.
 
-        :param dump_pool:
+        :param dump_threads:
         :param join_threads:
         :return:
         """
 
-        self.logger.info('Starting command.')
-        for thread in self.pool:
+        self.logger.info('Starting threads.')
+        for thread in self.thread_pool:
             thread.start()
         if join_threads:
-            for i, thread in enumerate(self.pool):
+            self.logger.info('Joining threads.')
+            for i, thread in enumerate(self.thread_pool):
                 thread.join()
                 self.logger.debug('Thread #{} joined: {}'.format(i, thread))
-        if dump_pool:
-            self.logger.debug('Dumping pool.')
-            self.dump_pool()
+        if dump_threads:
+            self.logger.debug('Dumping threads.')
+            self.dump_threads()
         return self
 
-    def dump_pool(self):
+    def dump_threads(self):
         """
         Remove the threads from the thread pool.
 
         :return:
         """
 
-        self.pool = []
+        self.thread_pool = []
         self.logger.info('Threads dumped, 0 threads in pool.')
         return self
