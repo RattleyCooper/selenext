@@ -5,7 +5,7 @@ using Slack.  This controller is pretty bare-bones.
 
 from time import sleep
 from random import randint
-from Helpers.Controllers import ThreadedController
+from Helpers.Controllers import IndependentController
 
 
 def _do_search(driver, wait, search_term):
@@ -48,7 +48,7 @@ class GoogleSearch(object):
         return _do_search(self.driver, self.wait, search_term)
 
 
-class ThreadedGoogleSearch(ThreadedController):
+class ThreadedGoogleSearch(IndependentController):
     def __init__(self, models):
         self.models = models
 
