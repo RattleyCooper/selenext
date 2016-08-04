@@ -5,10 +5,10 @@ down using wildcard expressions, or regular expressions.
 The functionality here will be expanded in the future to include
 other filtering techniques.
 """
-
 from re import match as rematch
 
 
+# todo: Should this be kept or removed?
 class WebElementFilter(object):
     def __init__(self):
         """
