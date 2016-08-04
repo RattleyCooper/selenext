@@ -20,7 +20,7 @@ from Helpers.Commands import ThreadedCommandFactory
 # controllers being used are subclasses of ThreadedController.
 controllers = {
     'google': GoogleExample.ThreadedGoogleSearch(Models),
-    'bing': BingExample.ThreadedBingSearch(Models)  # Check out the example files for more info on threading.
+    'bing': BingExample.ThreadedBingSearch(Models)
 }
 cmd_factory = ThreadedCommandFactory(controllers, False)
 
