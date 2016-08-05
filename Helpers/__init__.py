@@ -5,27 +5,43 @@ class DummyLogger(object):
     A logger that does absolutely nothing.  Meant as a drop in replacement for a
     logger that you would normally get from the logging module.
     """
-    def __init__(self, prints=True):
+    def __init__(self, prints=True, level='DEBUG'):
         self.prints = prints
+        self.levels = {
+            'INFO': 0,
+            'DEBUG': 1,
+            'WARN': 2,
+            'ERROR': 3,
+            'FATAL': 4
+        }
+        try:
+            self.level = self.levels[level]
+        except KeyError:
+            self.level = 0
 
     def info(self, *args):
-        if self.prints:
+        if self.prints and self.level >= 0:
             print "INFO: {}".format(args)
         return self
 
+    def debug(self, *args):
+        if self.prints and self.level >= 1:
+            print "DEBUG: {}".format(args)
+        return self
+
     def warn(self, *args):
-        if self.prints:
+        if self.prints and self.level >= 2:
             print "WARN: {}".format(args)
         return self
 
     def error(self, *args):
-        if self.prints:
+        if self.prints and self.level >= 3:
             print "ERROR: {}".format(args)
         return self
 
-    def debug(self, *args):
-        if self.prints:
-            print "DEBUG: {}".format(args)
+    def fatal(self, *args):
+        if self.prints and self.level >= 4:
+            print "FATAL: {}".format(args)
         return self
 
 
