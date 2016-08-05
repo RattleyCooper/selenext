@@ -2,7 +2,7 @@ import sys
 
 
 def write_stub(filepath, stub):
-    if filepath[:-3] != '.py':
+    if filepath[-3:] != '.py':
         filepath += '.py'
     with open(filepath, 'w') as f:
         f.write(stub)
