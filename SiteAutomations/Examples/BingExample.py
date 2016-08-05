@@ -26,6 +26,10 @@ def _do_search(driver, wait, search_term):
 
 
 class BingSearch(object):
+    """
+    This Controller needs a WebDriver instance, WebDriverWait instance,
+    and the collection of Models in order to work.
+    """
     def __init__(self, driver, wait, models):
         self.driver = driver
         self.wait = wait
@@ -36,6 +40,11 @@ class BingSearch(object):
 
 
 class ThreadedBingSearch(IndependentController):
+    """
+    Note that if you inherit from IndependentController, you can use
+    the CommandManager or ThreadedCommandManager to perform requests
+    with their own WebDriver instances.
+    """
     def __init__(self, models):
         self.models = models
 

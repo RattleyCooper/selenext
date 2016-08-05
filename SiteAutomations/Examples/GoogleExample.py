@@ -35,6 +35,10 @@ def _do_search(driver, wait, search_term):
 
 
 class GoogleSearch(object):
+    """
+    This Controller needs a WebDriver instance, WebDriverWait instance,
+    and the collection of Models in order to work.
+    """
     def __init__(self, driver, wait, models):
         # Set up driver.
         if driver.__class__.__name__ != 'WebDriver':
@@ -49,6 +53,11 @@ class GoogleSearch(object):
 
 
 class ThreadedGoogleSearch(IndependentController):
+    """
+    Note that if you inherit from IndependentController, you can use
+    the CommandManager or ThreadedCommandManager to perform requests
+    with their own WebDriver instances.
+    """
     def __init__(self, models):
         self.models = models
 
