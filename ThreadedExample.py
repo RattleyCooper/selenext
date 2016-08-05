@@ -46,8 +46,10 @@ search_command_2 = {
 
 # Create the threads.  A Command instance is returned when
 # the threads are created.  These Command objects are used
-# to start the threads.  Pass a function as the first
-# parameter and the command pack as *args.
+# to start the threads.  Pass a function(controller as first
+# argument and *args as the second) as the first parameter
+# to the create_command method, and the command pack as the
+# second parameter to the create_command method.
 cmd1 = cmd_factory.create_command(lambda controller, *search_term: controller.do_search(*search_term), search_command_1)
 cmd2 = cmd_factory.create_command(lambda controller, *search_term: controller.do_search(*search_term), search_command_2)
 
