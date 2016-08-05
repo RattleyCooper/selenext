@@ -38,7 +38,9 @@ search_command_1 = {
 
 # Each argument is passed as *args.  If you need any
 # **kwargs, just instantiate a Kwargs object with the
-# dictionary containing the **kwargs.
+# dictionary containing the **kwargs and make sure
+# the method you are calling with the command pack
+# is decorated with @has_kwargs.
 search_command_2 = {
     'google': ('star wars', Kwargs({'some_kwarg': 'Overridden value!!!'})),
     'bing': ('star wars',)
