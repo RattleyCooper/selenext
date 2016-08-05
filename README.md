@@ -22,7 +22,7 @@ Just download this as a .zip and then open it as a project in an IDE like PyChar
 ## Dependencies
 
 * [peewee](http://docs.peewee-orm.com/en/latest/)
-`pip install peewee`
+`pip install peewee` + installing peewee's dependencies.
 * [selenium python bindings](http://selenium-python.readthedocs.org/)
 `pip install selenium`
 
