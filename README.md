@@ -73,7 +73,7 @@ You can manually set any key/value you do not want to show up in version control
 
 Models are defined based on `peewee` models, so [check out how to use them](http://docs.peewee-orm.com/en/latest/peewee/models.html)..
 
-Once you have defined your models, they are accessed using the `Models.ModelName` syntax.
+Once you have defined your models in [`Project/Models.py`](https://github.com/Wykleph/Slack/blob/master/Project/Models.py), they are accessed using the `Models.ModelName` syntax.
 
 #### Running Migrations on Models
 
