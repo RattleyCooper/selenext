@@ -14,7 +14,8 @@ from Project import Models
 # Controllers are kept in the SiteAutomations folder.
 from SiteAutomations.Examples import GoogleExample, BingExample
 # Pull in the command factory, which is the backbone to threaded automations.
-from Helpers.Commands import ThreadedCommandFactory
+# also pull in the Kwargs object for passing kwargs into commands.
+from Helpers.Commands import ThreadedCommandFactory, Kwargs
 
 # Define some controllers to pass to ThreadedCommandFactory.
 # Note that the controllers being used are subclasses of IndependentController.
@@ -33,17 +34,20 @@ search_command_1 = {
     'bing': ('bing wiki',)
 }
 
+# Each argument is passed as *args.  If you need any
+# **kwargs, just instantiate a Kwargs object with the
+# dictionary containing the **kwargs.
 search_command_2 = {
-    'google': ('star wars',),
+    'google': ('star wars', Kwargs({'some_kwarg': 'Overridden value!!!'})),
     'bing': ('star wars',)
 }
 
-# Create the threads.  Pass a function as the first parameter and
-# the command pack as the second parameter.  A Command instance
-# is returned when the threads are created.  These Command
-# objects are used to start the threads.
-cmd1 = cmd_factory.create_command(lambda controller, search_term: controller.do_search(search_term), search_command_1)
-cmd2 = cmd_factory.create_command(lambda controller, search_term: controller.do_search(search_term), search_command_2)
+# Create the threads.  A Command instance is returned when
+# the threads are created.  These Command objects are used
+# to start the threads.  Pass a function as the first
+# parameter and the command pack as *args.
+cmd1 = cmd_factory.create_command(lambda controller, *search_term: controller.do_search(*search_term), search_command_1)
+cmd2 = cmd_factory.create_command(lambda controller, *search_term: controller.do_search(*search_term), search_command_2)
 
 # Start the threads.  Each search will be executed, and it will
 # only take as long as the longest loading time.

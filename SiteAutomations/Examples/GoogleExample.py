@@ -5,7 +5,7 @@ using Slack.  This controller is pretty bare-bones.
 
 from time import sleep
 from random import randint
-from Helpers.Controllers import IndependentController
+from Helpers.Controllers import IndependentController, has_kwargs
 
 
 def _do_search(driver, wait, search_term):
@@ -61,5 +61,10 @@ class ThreadedGoogleSearch(IndependentController):
     def __init__(self, models):
         self.models = models
 
-    def do_search(self, search_term):
+    # Using the @has_kwargs decorator allows keyword arguments to be
+    # passed to the method.  When you assemble a command pack for the
+    # CommandManager, just include an instance of the Kwargs object.
+    @has_kwargs
+    def do_search(self, search_term, some_kwarg='some value'):
+        print some_kwarg
         return _do_search(self.driver, self.wait, search_term)

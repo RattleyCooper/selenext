@@ -3,6 +3,40 @@ from Helpers import DummyLogger, DummyThread
 import threading
 
 
+class Kwargs(object):
+    """
+    An object used for passing **kwargs with your *args.
+
+    Example:
+
+    @has_kwargs
+    def some_controller_func(first_arg, second_arg, some_arg=True, other_arg='NA'):
+        print first_arg, second_arg
+        print some_arg, other_arg
+
+    a = ('hello', 'world', Kwargs({'some_arg': 'HELLO', 'other_arg': 'WORLD!!!'}))
+    some_controller_func(*a)
+
+    """
+    def __init__(self, dict):
+        self.dictionary = dict
+
+    def __len__(self):
+        return len(self.dictionary)
+
+    def __getitem__(self, key):
+        return self.dictionary[key]
+
+    def __setitem__(self, key, value):
+        self.dictionary[key] = value
+
+    def __delitem__(self, key):
+        del self.dictionary[key]
+
+    def __iter__(self):
+        return self.dictionary.iteritems()
+
+
 class BaseCommandFactory(object):
     def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, log_file='main_log.txt'):
         if type(controllers) != dict:
