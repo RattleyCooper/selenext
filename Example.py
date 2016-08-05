@@ -55,6 +55,9 @@ controllers = {
     'google': GoogleExample.ThreadedGoogleSearch(Models),
     'bing': BingExample.ThreadedBingSearch(Models)  # Check out the example files for more info on threading.
 }
+# We use the CommandFactory instead of the ThreadedCommandFactory
+# so that the each controller has it's own WebDriver instance
+# and each request is made in the main thread.
 cmd_factory = CommandFactory(controllers, logging=False)
 
 # Register arguments to pass to each controller.  They are
