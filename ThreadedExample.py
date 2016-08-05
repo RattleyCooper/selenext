@@ -28,9 +28,9 @@ controllers = {
 cmd_factory = ThreadedCommandFactory(controllers, logging=False)
 
 # Register arguments to pass to each controller.  They are
-# matched by the key in the controllers dictionary.
-# The next search_command shows how to add kwargs to
-# the command pack.
+# matched by the key in the controllers dictionary. The
+# next search_command shows how to add kwargs to the command
+# pack.
 search_command_1 = {
     'google': ('google wiki',),
     'bing': ('bing wiki',)
