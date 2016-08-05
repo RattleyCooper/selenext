@@ -10,22 +10,22 @@ class DummyLogger(object):
 
     def info(self, *args):
         if self.prints:
-            print args
+            print "INFO: {}".format(args)
         return self
 
     def warn(self, *args):
         if self.prints:
-            print args
+            print "WARN: {}".format(args)
         return self
 
     def error(self, *args):
         if self.prints:
-            print args
+            print "ERROR: {}".format(args)
         return self
 
     def debug(self, *args):
         if self.prints:
-            print args
+            print "DEBUG: {}".format(args)
         return self
 
 
