@@ -68,7 +68,7 @@ cmd_factory = CommandFactory(controllers, logging=False)
 # the method you are calling with the command pack
 # is decorated with @has_kwargs.
 search_command = {
-    'google': ('star wars', Kwargs({'some_kwarg': 'NEW KWARG VALUE!'})),  # override the some_kwarg keyword argument.
+    'google': ('star wars', Kwargs({'some_kwarg': 'NEW KWARG VALUE!'})),  # You can override keyword arguments as well!
     'bing': ('star wars',)
 }
 
