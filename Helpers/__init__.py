@@ -27,3 +27,34 @@ class DummyLogger(object):
         if self.prints:
             print args
         return self
+
+
+class DummyThread(object):
+    """
+    A drop in for threading.Thread.  It only has the join and start methods at the moment.
+    """
+    def __init__(self, target=False, args=()):
+        if not target:
+            raise ValueError('target must be callable.')
+        if len(args) == 0 or type(args) != tuple:
+            raise ValueError('args must be a tuple with more than 0 values')
+        self.target = target
+        self.args = args
+
+    def join(self):
+        """
+        Does nothing.
+
+        :return:
+        """
+
+        pass
+
+    def start(self):
+        """
+        Execute the target function with the given args.
+
+        :return:
+        """
+
+        return self.target(*self.args)
