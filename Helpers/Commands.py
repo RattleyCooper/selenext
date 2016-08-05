@@ -3,6 +3,40 @@ from Helpers import DummyLogger, DummyThread
 import threading
 
 
+class Kwargs(object):
+    """
+    An object used for passing **kwargs with your *args.
+
+    Example:
+
+    @has_kwargs
+    def some_controller_func(first_arg, second_arg, some_arg=True, other_arg='NA'):
+        print first_arg, second_arg
+        print some_arg, other_arg
+
+    a = ('hello', 'world', Kwargs({'some_arg': 'HELLO', 'other_arg': 'WORLD!!!'}))
+    some_controller_func(*a)
+
+    """
+    def __init__(self, dict):
+        self.dictionary = dict
+
+    def __len__(self):
+        return len(self.dictionary)
+
+    def __getitem__(self, key):
+        return self.dictionary[key]
+
+    def __setitem__(self, key, value):
+        self.dictionary[key] = value
+
+    def __delitem__(self, key):
+        del self.dictionary[key]
+
+    def __iter__(self):
+        return self.dictionary.iteritems()
+
+
 class BaseCommandFactory(object):
     def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, log_file='main_log.txt'):
         if type(controllers) != dict:
@@ -88,17 +122,17 @@ class ThreadedCommandFactory(BaseCommandFactory):
         def do_login(controller, username, password):
             return controller.do_login(username, password)
 
-        m = ThreadedControllerManager({
+        m = ThreadedCommandFactory({
                 'google': google_controller,
                 'bing': bing_controller
             }
         )
-        do_login_command = {
+        cmd = do_login_command = {
             'google': ('google_username', 'google_password'),
             'bing': ('bing_username', 'bing_password')
         }
-        cmd = m.create_threads(do_login, do_login_command)
-        cmd.start_threads()
+        cmd = m.create_command(do_login, do_login_command)
+        cmd.start()
 
         :param target:
         :param command_pack:
