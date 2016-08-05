@@ -88,17 +88,17 @@ class ThreadedCommandFactory(BaseCommandFactory):
         def do_login(controller, username, password):
             return controller.do_login(username, password)
 
-        m = ThreadedControllerManager({
+        m = ThreadedCommandFactory({
                 'google': google_controller,
                 'bing': bing_controller
             }
         )
-        do_login_command = {
+        cmd = do_login_command = {
             'google': ('google_username', 'google_password'),
             'bing': ('bing_username', 'bing_password')
         }
-        cmd = m.create_threads(do_login, do_login_command)
-        cmd.start_threads()
+        cmd = m.create_command(do_login, do_login_command)
+        cmd.start()
 
         :param target:
         :param command_pack:
