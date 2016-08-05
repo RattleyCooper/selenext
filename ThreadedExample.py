@@ -29,6 +29,8 @@ cmd_factory = ThreadedCommandFactory(controllers, logging=False)
 
 # Register arguments to pass to each controller.  They are
 # matched by the key in the controllers dictionary.
+# The next search_command shows how to add kwargs to
+# the command pack.
 search_command_1 = {
     'google': ('google wiki',),
     'bing': ('bing wiki',)
@@ -50,7 +52,7 @@ cmd1 = cmd_factory.create_command(lambda controller, *search_term: controller.do
 cmd2 = cmd_factory.create_command(lambda controller, *search_term: controller.do_search(*search_term), search_command_2)
 
 # Start the threads.  Each search will be executed, and it will
-# only take as long as the longest loading time.
+# only take as long as the longest automation time.
 cmd1.start()
 print 'finished first search'
 sleep(3)
