@@ -17,7 +17,7 @@ from Config.Environment import env, env_driver
 from SiteAutomations.Examples import GoogleExample, BingExample
 from Helpers.Contexts import quitting
 # Pull in the command factory for the second example.
-from Helpers.Commands import CommandFactory
+from Helpers.Commands import CommandFactory, Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
 
 # This is where selenium starts up.
@@ -62,8 +62,13 @@ cmd_factory = CommandFactory(controllers, logging=False)
 
 # Register arguments to pass to each controller.  They are
 # matched by the key in the controllers dictionary.
+# Command packs are passed as *args.  If you need any
+# **kwargs, just instantiate a Kwargs object with the
+# dictionary containing the **kwargs and make sure
+# the method you are calling with the command pack
+# is decorated with @has_kwargs.
 search_command = {
-    'google': ('star wars',),
+    'google': ('star wars', Kwargs({'some_kwarg': 'NEW KWARG VALUE!'})),  # override the some_kwarg keyword argument.
     'bing': ('star wars',)
 }
 
@@ -71,7 +76,7 @@ search_command = {
 # the command pack as the second parameter.  A Command instance
 # is returned when the command is created.  These Command
 # objects are used to start the work!
-cmd = cmd_factory.create_command(lambda controller, search_term: controller.do_search(search_term), search_command)
+cmd = cmd_factory.create_command(lambda controller, *search_term: controller.do_search(*search_term), search_command)
 
 # Start the command.  Each search will be executed one after the
 # other.
