@@ -34,6 +34,7 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     # Here is an example of a `SiteAutomation` taken from the
     # `GoogleExample.py` file.
     wait = WebDriverWait(driver, 30)
+
     # Pass the web driver to the site automation along with anything
     # else it might need to do its job. This could include an
     # instance of WebDriverWait, and even the collection of
@@ -55,6 +56,7 @@ controllers = {
     'google': GoogleExample.ThreadedGoogleSearch(Models),
     'bing': BingExample.ThreadedBingSearch(Models)  # Check out the example files for more info on threading.
 }
+
 # We use the CommandFactory instead of the ThreadedCommandFactory
 # so that the each controller has it's own WebDriver instance
 # and each request is made in the main thread.
