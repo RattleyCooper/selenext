@@ -18,8 +18,12 @@ class Kwargs(object):
     some_controller_func(*a)
 
     """
-    def __init__(self, dict):
-        self.dictionary = dict
+    def __init__(self, dictionary):
+        try:
+            dictionary.keys()
+        except:
+            raise TypeError('Kwargs requires a dictionary, got a {}'.format(type(dictionary)))
+        self.dictionary = dictionary
 
     def __len__(self):
         return len(self.dictionary)
@@ -32,6 +36,7 @@ class Kwargs(object):
 
     def __delitem__(self, key):
         del self.dictionary[key]
+        return self
 
     def __iter__(self):
         return self.dictionary.iteritems()
