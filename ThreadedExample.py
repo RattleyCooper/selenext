@@ -59,7 +59,7 @@ cmd2 = cmd_factory.create_command(lambda controller, *search_term: controller.do
 # only take as long as the longest automation time.
 cmd1.start()
 print 'finished first search'
-sleep(3)
+sleep(5)
 cmd2.start()
 print 'finished second search'
 sleep(5)
