@@ -43,7 +43,7 @@ class Kwargs(object):
 
 
 class BaseCommandFactory(object):
-    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, log_file='main_log.txt'):
+    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, dummy_logger_prints=False, log_file='main_log.txt'):
         if type(controllers) != dict:
             raise TypeError('controllers must be a dictionary of controllers.')
         self.attach_drivers = attach_drivers
@@ -69,7 +69,7 @@ class BaseCommandFactory(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger()
+            self.logger = DummyLogger(prints=dummy_logger_prints)
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
@@ -184,7 +184,7 @@ class CommandFactory(BaseCommandFactory):
 
 
 class Command(object):
-    def __init__(self, logging, pool, log_file='command_log.txt'):
+    def __init__(self, logging, pool, dummy_logger_prints=False, log_file='command_log.txt'):
         self.log_file = log_file
         if logging:
             # Set up the logger #
@@ -206,7 +206,7 @@ class Command(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger()
+            self.logger = DummyLogger(prints=dummy_logger_prints)
 
         self.pool = pool
 
