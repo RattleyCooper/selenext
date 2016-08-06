@@ -69,7 +69,7 @@ class BaseCommandFactory(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger(prints=dummy_logger_prints)
+            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
@@ -160,12 +160,13 @@ class ThreadedCommandFactory(BaseCommandFactory):
 
 
 class CommandFactory(BaseCommandFactory):
-    def create_command(self, target, command_pack):
+    def create_command(self, target, command_pack, dummy_logger_prints=False):
         """
         Create a command that will execute jobs one by one.
-
+        
         :param target:
         :param command_pack:
+        :param dummy_logger_prints:
         :return:
         """
 
@@ -180,7 +181,7 @@ class CommandFactory(BaseCommandFactory):
 
         pool, self.pool = self.pool, []
 
-        return Command(self.logging_val, pool, log_file=self.log_file)
+        return Command(self.logging_val, pool, log_file=self.log_file, dummy_logger_prints=dummy_logger_prints)
 
 
 class Command(object):
@@ -206,7 +207,7 @@ class Command(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger(prints=dummy_logger_prints)
+            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
 
         self.pool = pool
 
