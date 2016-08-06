@@ -72,20 +72,26 @@ database.
 You can manually set any key/value you do not want to show up in version control inside the [`.env`](https://github.com/Wykleph/Slack/blob/master/.env) file, then use the
 `env` helper function located in [`Config.Environment`](https://github.com/Wykleph/Slack/blob/master/Config/Environment.py) to retrieve the values later.
 
-## Creating Models
+## Creating Database Models
 
 Models are defined based on `peewee` models, so [check out how to use them](http://docs.peewee-orm.com/en/latest/peewee/models.html)..
 
 Once you have defined your models in [`Project/Models.py`](https://github.com/Wykleph/Slack/blob/master/Project/Models.py), they are accessed using the `Models.ModelName` syntax.
 
-#### Running Migrations on Models
+## Using Database Models
+
+For best results, [check out the documentation.](http://docs.peewee-orm.com/en/latest/peewee/querying.html)  There are
+tons of examples.
+
+#### Running Migrations on Database Models
 
 A migration is basically just a way of saying, "create the tables in the database based on our defined models", at least
 for now.  Database seeding will be implemented in the near future, however you can run basic migrations to recreate your
 database tables based on the models you defined in [`Project/Models.py`](https://github.com/Wykleph/Slack/blob/master/Project/Models.py).  The [`Project/Migrations.py`](https://github.com/Wykleph/Slack/blob/master/Migrations.py) file will use reflection to load
 the model attributes and create the tables for you.
 
-Just run the `Migrations.py` file to run your migrations.
+Just run the `Migrations.py` file and it will create your database based on how you defined your database `Models`.  It
+will also use the settings you provided in the `.env` file for the database connection.
 
 ## Filtering `WebElement` Instances
 
