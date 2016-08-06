@@ -42,9 +42,9 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     google_search = GoogleExample.GoogleSearch(driver, wait, Models)
     bing_search = BingExample.BingSearch(driver, wait, Models)
     google_search.do_search('google wiki')
-    sleep(1)
+    sleep(5)
     bing_search.do_search('bing wiki')
-    sleep(1)
+    sleep(5)
 
 # Optionally, you can use the command manager to do the searches.
 # This will make each controller use it's own personal WebDriver.
