@@ -1,13 +1,3 @@
-"""
-Slack is a micro-framework for scraping the web using selenium.
-Written by Wykleph in April of 2016.
-
-Create models in the `Models.py` file.
-
-Once you have defined your models, they are accessed using the
-`Models.ModelName` syntax.
-"""
-
 from time import sleep
 # Database models used to interact with databases.
 from Project import Models
@@ -25,7 +15,21 @@ controllers = {
     'google': GoogleExample.ThreadedGoogleSearch(Models),
     'bing': BingExample.ThreadedBingSearch(Models)
 }
+
 cmd_factory = ThreadedCommandFactory(controllers, logging=False)
+# In addition to creating Command objects, instances of any CommandFactory object
+# will act similar to how a dictionary works. The only difference is you don't need
+# to call anything like iteritems() when iterating over it:
+#
+#       for key, controller in cmd_factory:
+#           print key, controller
+#
+#       b = cmd_factory['bing']
+#       b.do_search('hello world')
+#
+#       del cmd_factory['bing']
+#       del cmd_factory['google']
+
 
 # Register arguments to pass to each controller.  They are
 # matched by the key in the controllers dictionary. The

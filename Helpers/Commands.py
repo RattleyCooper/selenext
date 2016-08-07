@@ -1,3 +1,4 @@
+from time import sleep
 from Config.Environment import env, env_driver
 from Helpers import DummyLogger, DummyThread
 import threading
@@ -36,7 +37,6 @@ class Kwargs(object):
 
     def __delitem__(self, key):
         del self.dictionary[key]
-        return self
 
     def __iter__(self):
         return self.dictionary.iteritems()
@@ -79,6 +79,35 @@ class BaseCommandFactory(object):
             self._attach_drivers()
             self.logger.info('Drivers attached.')
 
+    def _shutdown_driver(self, key, retry=True):
+        try:
+            self.controllers[key].driver.close()
+        except:
+            pass
+        try:
+            self.controllers[key].driver.quit()
+        except:
+            pass
+        if retry:
+            self._shutdown_driver(key, retry=False)
+        return self
+
+    def __len__(self):
+        return len(self.controllers)
+
+    def __setitem__(self, key, value):
+        self.controllers[key] = value
+
+    def __getitem__(self, item):
+        return self.controllers[item]
+
+    def __delitem__(self, key):
+        self._shutdown_driver(key)
+        del self.controllers[key]
+
+    def __iter__(self):
+        return self.controllers.iteritems()
+
     def _attach_drivers(self):
         """
         Attach separate drivers to each controller.
@@ -98,11 +127,7 @@ class BaseCommandFactory(object):
         """
 
         for key, controller in self.controllers.iteritems():
-            controller.driver.close()
-            try:
-                controller.driver.quit()
-            except Exception:
-                pass
+            self._shutdown_driver(key)
 
 
 class ThreadedCommandFactory(BaseCommandFactory):
