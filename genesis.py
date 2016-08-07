@@ -8,6 +8,8 @@ Commands are:
     python genesis.py make:managed-stub {filename}
     python genesis.py make:stub {filename}
     python genesis.py run:migrations {filename}
+    # Custom jobs are supported as well.
+    python genesis.py run:{JobName}
 """
 
 import sys
@@ -104,7 +106,9 @@ if __name__ == '__main__':
         value = None
         the_flag = None
 
-        if arg_len == 2:
+        if arg_len == 1:
+            command = args[0]
+        elif arg_len == 2:
             command, value = args
         elif arg_len == 3:
             command, value, the_flag = args
@@ -117,5 +121,15 @@ if __name__ == '__main__':
             make_managed_stub(value)
         elif command == 'run:migrations':
             import Migrations
+        elif 'run:' in command:
+            # Get the Module name
+            module_name = command.split(':')[-1]
+            module_obj = __import__('Project.Jobs.{}'.format(module_name), fromlist=[''])
+            module_attrs = dir(module_obj)
+            if 'start_job' in module_attrs:
+                start_job = getattr(module_obj, 'start_job')
+                start_job()
+            else:
+                raise AttributeError('Jobs must contain a `start_job` method.')
 
     main()
