@@ -1,4 +1,3 @@
-from time import sleep
 from Config.Environment import env, env_driver
 from Helpers import DummyLogger, DummyThread
 import threading

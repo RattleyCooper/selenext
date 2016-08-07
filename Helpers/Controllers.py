@@ -1,4 +1,3 @@
-from datetime import datetime
 from Helpers.Commands import Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
 
