@@ -93,44 +93,43 @@ cmd = command_factory.create_command(, some_command)
 
 
 # Start main program
-# if __name__ == '__main__':
-def main():
-    args = sys.argv[1:]
+if __name__ == '__main__':
+    def main():
+        args = sys.argv[1:]
 
-    arg_len = len(args)
+        arg_len = len(args)
 
-    if arg_len >= 4:
-        exit()
+        if arg_len >= 4:
+            exit()
 
-    command = None
-    value = None
-    the_flag = None
+        command = None
+        value = None
+        the_flag = None
 
-    if arg_len == 1:
-        command = args[0]
-    elif arg_len == 2:
-        command, value = args
-    elif arg_len == 3:
-        command, value, the_flag = args
+        if arg_len == 1:
+            command = args[0]
+        elif arg_len == 2:
+            command, value = args
+        elif arg_len == 3:
+            command, value, the_flag = args
 
-    if command == 'make:threaded-stub':
-        make_threaded_stub(value)
-    elif command == 'make:stub':
-        make_stub(value)
-    elif command == 'make:managed-stub':
-        make_managed_stub(value)
-    elif command == 'run:migrations':
-        import Migrations
-    elif 'run:' in command:
-        # Get the Module name
-        module_name = command.split(':')[-1]
-        module_obj = __import__('Project.Jobs.{}'.format(module_name), fromlist=[''])
-        module_attrs = dir(module_obj)
-        if 'start_job' in module_attrs:
-            start_job = getattr(module_obj, 'start_job')
-            start_job()
-        else:
-            print 'Jobs must contain a start_job method.'
+        if command == 'make:threaded-stub':
+            make_threaded_stub(value)
+        elif command == 'make:stub':
+            make_stub(value)
+        elif command == 'make:managed-stub':
+            make_managed_stub(value)
+        elif command == 'run:migrations':
+            import Migrations
+        elif 'run:' in command:
+            # Get the Module name
+            module_name = command.split(':')[-1]
+            module_obj = __import__('Project.Jobs.{}'.format(module_name), fromlist=[''])
+            module_attrs = dir(module_obj)
+            if 'start_job' in module_attrs:
+                start_job = getattr(module_obj, 'start_job')
+                start_job()
+            else:
+                raise AttributeError('Jobs must contain a `start_job` method.')
 
-
-main()
+    main()
