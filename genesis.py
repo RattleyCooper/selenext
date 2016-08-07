@@ -1,3 +1,15 @@
+"""
+genesis.py is used for creating program stubs and running middleware.
+
+That is about it so far.
+
+Commands are:
+    python genesis.py make:threaded-stub {filename}
+    python genesis.py make:managed-stub {filename}
+    python genesis.py make:stub {filename}
+    python genesis.py run:migrations {filename}
+"""
+
 import sys
 
 
