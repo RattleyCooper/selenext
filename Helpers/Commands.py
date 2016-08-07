@@ -78,19 +78,6 @@ class BaseCommandFactory(object):
             self._attach_drivers()
             self.logger.info('Drivers attached.')
 
-    def _shutdown_driver(self, key, retry=True):
-        try:
-            self.controllers[key].driver.close()
-        except:
-            pass
-        try:
-            self.controllers[key].driver.quit()
-        except:
-            pass
-        if retry:
-            self._shutdown_driver(key, retry=False)
-        return self
-
     def __len__(self):
         return len(self.controllers)
 
@@ -117,6 +104,19 @@ class BaseCommandFactory(object):
         for key, args in self.controllers.iteritems():
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
+
+    def _shutdown_driver(self, key, retry=True):
+        try:
+            self.controllers[key].driver.close()
+        except:
+            pass
+        try:
+            self.controllers[key].driver.quit()
+        except:
+            pass
+        if retry:
+            self._shutdown_driver(key, retry=False)
+        return self
 
     def shutdown(self):
         """

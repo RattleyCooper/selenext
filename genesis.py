@@ -7,7 +7,7 @@ Commands are:
     python genesis.py make:threaded-stub {filename}
     python genesis.py make:managed-stub {filename}
     python genesis.py make:stub {filename}
-    python genesis.py run:migrations {filename}
+    python genesis.py run:migrations
     # Custom jobs are supported as well.
     python genesis.py run:{JobName}
 """
