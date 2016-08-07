@@ -34,7 +34,8 @@ documentation below.
 
 ## Examples
 
-Check out [the documentation](https://github.com/Wykleph/Slack/wiki/Documentation) in the wiki.
+Check out [the documentation](https://github.com/Wykleph/Slack/wiki/Documentation) for the various parts and pieces in the wiki.
+API documentation will be coming soon.
 
 _There is an [`Example.py`](https://github.com/Wykleph/Slack/blob/master/Example.py) file that shows what the master controller of an application looks like when utilizing the `Slack`
 framework.  `Example.py` can be used as a template.  There is also a [`ThreadedExample.py`](https://github.com/Wykleph/Slack/blob/master/ThreadedExample.py) file that shows how to
