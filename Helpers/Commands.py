@@ -18,8 +18,12 @@ class Kwargs(object):
     some_controller_func(*a)
 
     """
-    def __init__(self, dict):
-        self.dictionary = dict
+    def __init__(self, dictionary):
+        try:
+            dictionary.keys()
+        except:
+            raise TypeError('Kwargs requires a dictionary, got a {}'.format(type(dictionary)))
+        self.dictionary = dictionary
 
     def __len__(self):
         return len(self.dictionary)
@@ -32,13 +36,14 @@ class Kwargs(object):
 
     def __delitem__(self, key):
         del self.dictionary[key]
+        return self
 
     def __iter__(self):
         return self.dictionary.iteritems()
 
 
 class BaseCommandFactory(object):
-    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, log_file='main_log.txt'):
+    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, dummy_logger_prints=False, log_file='main_log.txt'):
         if type(controllers) != dict:
             raise TypeError('controllers must be a dictionary of controllers.')
         self.attach_drivers = attach_drivers
@@ -64,7 +69,7 @@ class BaseCommandFactory(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger()
+            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
@@ -155,12 +160,13 @@ class ThreadedCommandFactory(BaseCommandFactory):
 
 
 class CommandFactory(BaseCommandFactory):
-    def create_command(self, target, command_pack):
+    def create_command(self, target, command_pack, dummy_logger_prints=False):
         """
         Create a command that will execute jobs one by one.
-
+        
         :param target:
         :param command_pack:
+        :param dummy_logger_prints:
         :return:
         """
 
@@ -175,11 +181,11 @@ class CommandFactory(BaseCommandFactory):
 
         pool, self.pool = self.pool, []
 
-        return Command(self.logging_val, pool, log_file=self.log_file)
+        return Command(self.logging_val, pool, log_file=self.log_file, dummy_logger_prints=dummy_logger_prints)
 
 
 class Command(object):
-    def __init__(self, logging, pool, log_file='command_log.txt'):
+    def __init__(self, logging, pool, dummy_logger_prints=False, log_file='command_log.txt'):
         self.log_file = log_file
         if logging:
             # Set up the logger #
@@ -201,7 +207,7 @@ class Command(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger()
+            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
 
         self.pool = pool
 

@@ -1,11 +1,51 @@
 import unittest
 
-from Helpers.Commands import ThreadedCommandFactory, Command
+from Helpers.Commands import ThreadedCommandFactory, Command, Kwargs
 from SiteAutomations.Examples import GoogleExample
 from Project import Models
 
 
-class ThreadedCommandManagerTest(unittest.TestCase):
+class KwargsTest(unittest.TestCase):
+    def setUp(self):
+        self.test_dict = {
+            'test1': 'hello world',
+            'test2': 'zim zam kabam!'
+        }
+        self.kwarg_obj = Kwargs(self.test_dict)
+
+    def test_iterate_over_object(self):
+        self.assertEqual(type(self.kwarg_obj), Kwargs)
+        for k, v in self.kwarg_obj:
+            self.assertEqual(type(k), str)
+
+    def test_instantiate_kwargs_object_with_invalid_input(self):
+        self.assertRaises(TypeError, Kwargs, 'hello world')
+        self.assertRaises(TypeError, Kwargs, u'hello world')
+        self.assertRaises(TypeError, Kwargs, 123)
+        self.assertRaises(TypeError, Kwargs, 1.00)
+
+    def test_get_item_from_kwargs_object(self):
+        self.assertEqual(self.kwarg_obj['test1'], 'hello world')
+        self.assertEqual(self.kwarg_obj['test2'], 'zim zam kabam!')
+
+    def test_set_item_from_kwargs_object(self):
+        def set_kwargs_val(key, value):
+            self.kwarg_obj[key] = value
+            return self.kwarg_obj
+
+        valid_output = {
+            'test1': 'hello world',
+            'test2': 'zim zam kabam!',
+            'test3': 123
+        }
+        self.assertEqual(set_kwargs_val('test3', 123).dictionary, valid_output)
+
+    def test_delete_item_from_kwargs_object(self):
+        test_kwargs_object = Kwargs(self.kwarg_obj.dictionary)
+        self.assertEqual(test_kwargs_object.__delitem__('test1').dictionary, {'test2': 'zim zam kabam!'})
+
+
+class ThreadedCommandFactoryTest(unittest.TestCase):
     def setUp(self):
         self.controllers = {
             'goog1': GoogleExample.ThreadedGoogleSearch(Models),
@@ -29,10 +69,11 @@ class ThreadedCommandManagerTest(unittest.TestCase):
         self.assertRaises(TypeError, self.cmd.create_command, _, 0b1010110)
 
     def test_create_threads_with_valid_input(self):
-        def _(*args):
+        def _(*args, **kwargs):
             print args
+            print kwargs
         command_pack = {
-            'goog1': ('hello',),
+            'goog1': ('hello', Kwargs({'a': 1, 'b': 2, 'c': 3})),
             'goog2': ('hello world!',)
         }
         self.assertIsInstance(self.cmd.create_command(_, command_pack), Command)

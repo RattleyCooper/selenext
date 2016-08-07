@@ -14,19 +14,32 @@ def has_kwargs(func):
     :return:
     """
 
-    def _process(*args):
+    # Define a local function within has_kwargs
+    def _process(*args, **kwargs):
         args = list(args)
         # Extract kwargs from args.
-        d_args = [t for t in args if type(t) == Kwargs]
-        try:
-            d_args = d_args[0]
-        except IndexError:
-            return func(*args, **{})
+        d_args = [thing for thing in args if type(thing) == Kwargs]
+
+        # Check if default kwargs should be used.
+        kwargs_len = len(kwargs)
+        if kwargs_len == 0:
+            # If there is a Kwargs instance in the list then process the kwargs
+            try:
+                d_args = d_args[0]  # Pop the Kwargs instance off the list
+            except IndexError:
+                # func is equal to some_controller_func
+                return func(*args, **{})
+
         # Remove kwargs from args
         args = [item for item in args if type(item) != Kwargs]
-        # Get args from Kwargs object.
-        kwargs = {k: v for (k, v) in d_args}
+
+        # Get kwargs from the dictionary args if default kwargs aren't used
+        if kwargs_len == 0:
+            kwargs = {k: v for (k, v) in d_args}
+        # Execute the func, which is some_controller_func
         return func(*args, **kwargs)
+
+    # Return the local callable function `_process`
     return _process
 
 

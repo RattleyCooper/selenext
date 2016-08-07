@@ -28,9 +28,9 @@ controllers = {
 cmd_factory = ThreadedCommandFactory(controllers, logging=False)
 
 # Register arguments to pass to each controller.  They are
-# matched by the key in the controllers dictionary.
-# The next search_command shows how to add kwargs to
-# the command pack.
+# matched by the key in the controllers dictionary. The
+# next search_command shows how to add kwargs to the command
+# pack.
 search_command_1 = {
     'google': ('google wiki',),
     'bing': ('bing wiki',)
@@ -38,7 +38,9 @@ search_command_1 = {
 
 # Each argument is passed as *args.  If you need any
 # **kwargs, just instantiate a Kwargs object with the
-# dictionary containing the **kwargs.
+# dictionary containing the **kwargs and make sure
+# the method you are calling with the command pack
+# is decorated with @has_kwargs.
 search_command_2 = {
     'google': ('star wars', Kwargs({'some_kwarg': 'Overridden value!!!'})),
     'bing': ('star wars',)
@@ -57,7 +59,7 @@ cmd2 = cmd_factory.create_command(lambda controller, *search_term: controller.do
 # only take as long as the longest automation time.
 cmd1.start()
 print 'finished first search'
-sleep(3)
+sleep(5)
 cmd2.start()
 print 'finished second search'
 sleep(5)
