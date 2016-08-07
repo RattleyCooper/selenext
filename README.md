@@ -83,7 +83,7 @@ Once you have defined your models in [`Project/Models.py`](https://github.com/Wy
 For best results, [check out the documentation.](http://docs.peewee-orm.com/en/latest/peewee/querying.html)  There are
 tons of examples.
 
-#### Running Migrations on Database Models
+## Running Migrations on Database Models
 
 A migration is basically just a way of saying, "create the tables in the database based on our defined models", at least
 for now.  Database seeding will be implemented in the near future, however you can run basic migrations to recreate your
