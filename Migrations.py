@@ -1,7 +1,7 @@
 """
 This file is used to migrate database tables to the database.
 """
-import Models
+import Project.Models
 
 
 def migrate():
@@ -26,15 +26,15 @@ def migrate():
         'prefetch'
     ]
 
-    migrations = list(set(dir(Models)) - set(models_pieces))
+    migrations = list(set(dir(Project.Models)) - set(models_pieces))
     migrations.remove('BaseModel')
 
     # Grab the actual class object for the model.
-    migrations = [getattr(Models, klass) for klass in migrations]
+    migrations = [getattr(Project.Models, klass) for klass in migrations]
     # Make sure we didn't pick up stragglers.
     migrations = [c for c in migrations if 'class' in str(c)]
 
-    db = Models.db
+    db = Project.Models.db
     db.connect()
     try:
         db.drop_tables(migrations)
