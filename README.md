@@ -19,7 +19,7 @@ that it's in development and that things will probably change as things progress
 
 ## Install
 
-Just download this as a .zip and then move the `Slack` directory into your `site-packages` folder.  Once there is a
+Just download this as a .zip and then unzip the `Slack` directory into your `site-packages` folder.  Once there is a
 stable release, there will be a pip install available.
 
 ## Dependencies
