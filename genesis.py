@@ -164,23 +164,24 @@ class BaseModel(Model):
     return True
 
 
-def create_site_automations_dir(filepath):
-    # Make SiteAutomations folder.
+def create_module(filepath):
     if not isdir(filepath):
-        print 'Creating SiteAutomations folder...'
+        print 'Creating module folder...'
         mkdir(filepath)
-        print 'SiteAutomations folder created...'
+        print 'Module folder created...'
     init_filepath = filepath + '__init__.py'
     if not isfile(init_filepath):
-        print 'Creating __init__.py in SiteAutomations...'
+        print 'Creating __init__.py...'
         write_stub(init_filepath, '')
         print '__init__.py created...'
+    return True
 
 
 def make_project(filepath):
     print
     folder = _get_folder(filepath)
     site_automations_folder = _get_folder(folder + 'SiteAutomations')
+    jobs_folder = _get_folder(folder + 'Jobs')
 
     if not isdir(folder):
         print 'Creating Project: {}...'.format(folder)
@@ -188,8 +189,13 @@ def make_project(filepath):
         print 'Project folder created!!!'
     else:
         print 'Project already exists...  Try again...'
+        return False
 
-    create_site_automations_dir(site_automations_folder)
+    print 'Creating SiteAutomations...'
+    create_module(site_automations_folder)
+    print 'Creating Jobs...'
+    create_module(jobs_folder)
+    print 'Generating scaffold...'
     make_project_scaffold(filepath)
     print
     return True
