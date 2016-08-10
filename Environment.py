@@ -1,10 +1,9 @@
+from os import getcwd
 from selenium import webdriver
 from peewee import *
 
-ENV_PATH = __file__\
-    .replace('Config\\', '.env')\
-    .replace('Environment.pyc', '')\
-    .replace('Environment.py', '')
+
+__SLACK_FRAMEWORK_ENV_PATH = getcwd().replace('\\', '/') + '/.env'
 
 
 class ConfigLoader:
@@ -22,13 +21,16 @@ class ConfigLoader:
     def get(self, variable_name):
         return self.lines[variable_name]
 
-RESOURCE_LOADER = ConfigLoader(filepath=ENV_PATH)
+# We use a global variable for the resource loader so that we are not constantly opening
+# the same file.  This will hold the config file in the ConfigLoader object so that
+# reloading is only done on imports.
+__SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigLoader(filepath=__SLACK_FRAMEWORK_ENV_PATH)
 
 
 def env(variable_name):
     """ Get the corresponding environment variable. """
 
-    return RESOURCE_LOADER.get(variable_name)
+    return __SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name)
 
 
 def env_driver(browser):

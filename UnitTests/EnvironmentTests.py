@@ -1,7 +1,9 @@
 import unittest
-from Config.Environment import env, env_driver, get_database
-from selenium import webdriver
+
 from peewee import SqliteDatabase
+from selenium import webdriver
+
+from Environment import env, env_driver, get_database
 
 
 class ConfigLoaderEnvironmentTest(unittest.TestCase):

@@ -2,7 +2,7 @@ from time import sleep
 # Database models used to interact with databases.
 from Project import Models
 # The environment variable loader.  These variables can be set in the .env file.
-from Config.Environment import env, env_driver
+from Environment import env, env_driver
 # Controllers are kept in the SiteAutomations folder.
 from SiteAutomations.Examples import GoogleExample, BingExample
 from Helpers.Contexts import quitting

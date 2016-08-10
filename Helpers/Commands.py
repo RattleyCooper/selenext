@@ -1,6 +1,7 @@
-from Config.Environment import env, env_driver
-from Helpers import DummyLogger, DummyThread
 import threading
+
+from ..Environment import env, env_driver
+from ..Helpers import DummyLogger, DummyThread
 
 
 class Kwargs(object):
@@ -18,6 +19,7 @@ class Kwargs(object):
     some_controller_func(*a)
 
     """
+
     def __init__(self, dictionary):
         try:
             dictionary.keys()
@@ -42,7 +44,8 @@ class Kwargs(object):
 
 
 class BaseCommandFactory(object):
-    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, dummy_logger_prints=False, log_file='main_log.txt'):
+    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, dummy_logger_prints=False,
+                 log_file='main_log.txt'):
         if type(controllers) != dict:
             raise TypeError('controllers must be a dictionary of controllers.')
         self.attach_drivers = attach_drivers
@@ -68,7 +71,7 @@ class BaseCommandFactory(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
+            self.logger = DummyLogger(prints=dummy_logger_prints, level='DEBUG')
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
@@ -100,7 +103,6 @@ class BaseCommandFactory(object):
 
         :return:
         """
-
         for key, args in self.controllers.iteritems():
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
@@ -187,7 +189,7 @@ class CommandFactory(BaseCommandFactory):
     def create_command(self, target, command_pack, dummy_logger_prints=False):
         """
         Create a command that will execute jobs one by one.
-        
+
         :param target:
         :param command_pack:
         :param dummy_logger_prints:
@@ -231,7 +233,7 @@ class Command(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
+            self.logger = DummyLogger(prints=dummy_logger_prints, level='DEBUG')
 
         self.pool = pool
 

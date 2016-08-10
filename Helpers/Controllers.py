@@ -1,4 +1,4 @@
-from Helpers.Commands import Kwargs
+from .Commands import Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
 
 

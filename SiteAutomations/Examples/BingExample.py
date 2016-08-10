@@ -1,6 +1,6 @@
 from time import sleep
 from random import randint
-from Helpers.Controllers import IndependentController
+from ...Helpers.Controllers import IndependentController
 
 
 def _do_search(driver, wait, search_term):

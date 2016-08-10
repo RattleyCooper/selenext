@@ -5,7 +5,7 @@ using Slack.  This controller is pretty bare-bones.
 
 from time import sleep
 from random import randint
-from Helpers.Controllers import IndependentController, has_kwargs
+from ...Helpers.Controllers import IndependentController, has_kwargs
 
 
 def _do_search(driver, wait, search_term):
