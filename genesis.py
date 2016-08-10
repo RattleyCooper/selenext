@@ -126,7 +126,7 @@ import models
 migrate(models)
 """
     models_stub = """from peewee import *
-from Slack.Config.Environment import get_database, env
+from Slack.Environment import get_database, env
 
 
 db = get_database(env("DB_TYPE"))
