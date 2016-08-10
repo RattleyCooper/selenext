@@ -5,7 +5,8 @@ from peewee import *
 
 __SLACK_FRAMEWORK_ENV_PATH = getcwd()\
                                  .replace('\\', '/')\
-                                 .replace('SiteAutomations', '')
+                                 .replace('SiteAutomations', '')\
+                                 .replace('Jobs', '')
 
 __SLACK_FRAMEWORK_ENV_PATH += '/.env' if __SLACK_FRAMEWORK_ENV_PATH[-1] != '/' else '.env'
 
