@@ -65,7 +65,7 @@ def get_database(db_type):
         db = MySQLDatabase(
             env("DB"),
             host=env("DB_HOST"),
-            port=env("DB_PORT"),
+            port=int(env("DB_PORT")),
             user=env("DB_USERNAME"),
             passwd=env("DB_PASSWORD")
         )
@@ -73,7 +73,7 @@ def get_database(db_type):
         db = PostgresqlDatabase(
             env('DB'),
             host=env("DB_HOST"),
-            port=env("DB_PORT"),
+            port=int(env("DB_PORT")),
             user=env("DB_USERNAME"),
             passwd=env("DB_PASSWORD")
         )
@@ -82,7 +82,7 @@ def get_database(db_type):
         db = BerkeleyDatabase(
             env('DB'),
             host=env("DB_HOST"),
-            port=env("DB_PORT"),
+            port=int(env("DB_PORT")),
             user=env("DB_USERNAME"),
             passwd=env("DB_PASSWORD")
         )
