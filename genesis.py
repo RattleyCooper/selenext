@@ -169,6 +169,11 @@ def create_module(filepath):
         print 'Creating module folder...'
         mkdir(filepath)
         print 'Module folder created...'
+    make_init(filepath)
+    return True
+
+
+def make_init(filepath):
     init_filepath = filepath + '__init__.py'
     if not isfile(init_filepath):
         print 'Creating __init__.py...'
@@ -189,6 +194,8 @@ def make_project(filepath):
         print 'Project folder created!!!'
     else:
         print 'Project folder already exists...'
+
+    make_init(folder)
 
     print 'Creating SiteAutomations...'
     create_module(site_automations_folder)
