@@ -188,8 +188,7 @@ def make_project(filepath):
         mkdir(folder)
         print 'Project folder created!!!'
     else:
-        print 'Project already exists...  Try again...'
-        return False
+        print 'Project folder already exists...'
 
     print 'Creating SiteAutomations...'
     create_module(site_automations_folder)
