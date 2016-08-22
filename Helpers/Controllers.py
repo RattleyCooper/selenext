@@ -1,5 +1,69 @@
+from random import randint
+from time import sleep
 from .Commands import Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
+
+
+def randomly_waits(function):
+    """
+    A decorator for waiting a random amount of time(1-3 seconds) after function execution.
+
+    :param function:
+    :return:
+    """
+
+    def random_wait_decorator(*args, **kwargs):
+        # Execute function and grab result
+        function_result = function(*args, **kwargs)
+        # Sleep
+        sleep(randint(1, 3))
+        return function_result
+    return random_wait_decorator
+
+
+def waits1(function):
+    """
+    A decorator for waiting 1 second after function execution.  Great for waiting between actions.
+
+    :param function:
+    :return:
+    """
+
+    def wait_decorator(*args, **kwargs):
+        function_result = function(*args, **kwargs)
+        sleep(1)
+        return function_result
+    return wait_decorator
+
+
+def waits2(function):
+    """
+    A decorator for waiting 2 seconds after function execution.  Great for waiting between actions.
+
+    :param function:
+    :return:
+    """
+
+    def wait_decorator(*args, **kwargs):
+        function_result = function(*args, **kwargs)
+        sleep(2)
+        return function_result
+    return wait_decorator
+
+
+def waits3(function):
+    """
+    A decorator for waiting 3 seconds after function execution.  Great for waiting between actions.
+
+    :param function:
+    :return:
+    """
+
+    def wait_decorator(*args, **kwargs):
+        function_result = function(*args, **kwargs)
+        sleep(3)
+        return function_result
+    return wait_decorator
 
 
 def has_kwargs(func):
