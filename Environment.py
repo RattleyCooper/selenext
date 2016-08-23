@@ -1,6 +1,4 @@
 from os import getcwd
-from selenium import webdriver
-from peewee import *
 
 
 __SLACK_FRAMEWORK_ENV_PATH = getcwd()\
@@ -40,18 +38,24 @@ def env(variable_name):
 
 def env_driver(browser):
     """ Return the web driver. """
+    from selenium import webdriver
 
     the_driver = False
     if browser == 'chrome':
         the_driver = webdriver.Chrome
+
     elif browser == 'firefox':
         the_driver = webdriver.Firefox
+
     elif browser == 'safari':
         the_driver = webdriver.Safari
+
     elif browser == 'phantomjs':
         the_driver = webdriver.PhantomJS
+
     elif browser == 'opera':
         the_driver = webdriver.Opera
+
     return the_driver
 
 
@@ -60,8 +64,13 @@ def get_database(db_type):
 
     db = False
     if db_type == 'sql':
+        from peewee import SqliteDatabase
+
         db = SqliteDatabase(env("DB"))
+
     elif db_type == 'mysql':
+        from peewee import MySQLDatabase
+
         db = MySQLDatabase(
             env("DB"),
             host=env("DB_HOST"),
@@ -69,7 +78,10 @@ def get_database(db_type):
             user=env("DB_USERNAME"),
             passwd=env("DB_PASSWORD")
         )
+
     elif db_type == 'postgresql':
+        from peewee import PostgresqlDatabase
+
         db = PostgresqlDatabase(
             env('DB'),
             host=env("DB_HOST"),
@@ -77,8 +89,10 @@ def get_database(db_type):
             user=env("DB_USERNAME"),
             passwd=env("DB_PASSWORD")
         )
+
     elif db_type == 'berkeley':
         from playhouse.berkeleydb import BerkeleyDatabase
+
         db = BerkeleyDatabase(
             env('DB'),
             host=env("DB_HOST"),
@@ -86,4 +100,5 @@ def get_database(db_type):
             user=env("DB_USERNAME"),
             passwd=env("DB_PASSWORD")
         )
+
     return db
