@@ -19,10 +19,11 @@ def migrate(models):
         'JOIN_INNER', 'JOIN_LEFT_OUTER', 'Model', 'MySQLDatabase',
         'NotSupportedError', 'OperationalError', 'Param',
         'PostgresqlDatabase', 'PrimaryKeyField', 'ProgrammingError',
-        'Proxy', 'R', 'SQL', 'SqliteDatabase', 'TextField', 'TimeField',
-        'UUIDField', 'Using', 'Window', '__builtins__', '__doc__',
-        '__file__', '__name__', '__package__', 'datetime', 'db', 'fn',
-        'prefetch'
+        'Proxy', 'R', 'SmallIntegerField', 'SQL', 'SqliteDatabase', 'TextField',
+        'TimeField',
+        'TimestampField', 'UUIDField', 'Using', 'Window', '__builtins__',
+        '__doc__', '__file__', '__name__', '__package__', 'datetime', 'db',
+        'fn', 'prefetch'
     ]
 
     migrations = list(set(dir(models)) - set(models_pieces))
