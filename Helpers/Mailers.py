@@ -1,3 +1,4 @@
+from __future__ import print_function
 import smtplib
 from email.mime.text import MIMEText
 
@@ -42,12 +43,12 @@ class GMailer:
 
         msg += "\r\n{}".format(the_msg)
         smtp = smtplib.SMTP("{}:{}".format(self.host, self.port))
-        print "Sending report..."
-        print smtp.ehlo()
-        print smtp.starttls()
-        print smtp.login(self.username, self.password)
-        print
-        print smtp.sendmail(self.username, email_list, msg)
+        print("Sending report...")
+        print(smtp.ehlo())
+        print(smtp.starttls())
+        print(smtp.login(self.username, self.password))
+        print()
+        print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
         return self
 
@@ -78,10 +79,10 @@ class GMailer:
         msg += "\r\n" + attachment.as_string()
 
         smtp = smtplib.SMTP("{}:{}".format(self.host, self.port))
-        print smtp.ehlo()
-        print smtp.starttls()
-        print smtp.login(self.username, self.password)
-        print
-        print smtp.sendmail(self.username, email_list, msg)
+        print(smtp.ehlo())
+        print(smtp.starttls())
+        print(smtp.login(self.username, self.password))
+        print()
+        print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
         return self

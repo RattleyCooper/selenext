@@ -12,6 +12,8 @@ Commands are:
     python genesis.py run:{JobName}
 """
 
+from __future__ import print_function
+
 import sys
 from os import mkdir
 from os.path import isfile, isdir
@@ -106,7 +108,7 @@ def _get_folder(filepath):
 
 
 def make_project_scaffold(filepath):
-    print
+    print()
     env_stub = """# Browsers: chrome, firefox, safari, phantomjs, opera
 BROWSER=chrome
 
@@ -145,30 +147,30 @@ class BaseModel(Model):
     main_filename = folder + 'main.py'
 
     if not isfile(env_filename):
-        print 'Writing .env file...'
+        print('Writing .env file...')
         write_stub(env_filename, env_stub, append_py=False)
-        print '.env file written...'
+        print('.env file written...')
     if not isfile(migrations_filename):
-        print 'Writing migrations.py file...'
+        print('Writing migrations.py file...')
         write_stub(migrations_filename, migrations_stub)
-        print 'migrations.py file written...'
+        print('migrations.py file written...')
     if not isfile(models_filename):
-        print 'Writing models.py file...'
+        print('Writing models.py file...')
         write_stub(models_filename, models_stub)
-        print 'models.py file written...'
+        print('models.py file written...')
     if not isfile(main_filename):
-        print 'Writing main.py file...'
+        print('Writing main.py file...')
         write_stub(main_filename, '')
-        print 'main.py file writte...'
-    print
+        print('main.py file writte...')
+    print()
     return True
 
 
 def create_module(filepath):
     if not isdir(filepath):
-        print 'Creating module folder...'
+        print('Creating module folder...')
         mkdir(filepath)
-        print 'Module folder created...'
+        print('Module folder created...')
     make_init(filepath)
     return True
 
@@ -176,34 +178,34 @@ def create_module(filepath):
 def make_init(filepath):
     init_filepath = filepath + '__init__.py'
     if not isfile(init_filepath):
-        print 'Creating __init__.py...'
+        print('Creating __init__.py...')
         write_stub(init_filepath, '')
-        print '__init__.py created...'
+        print('__init__.py created...')
     return True
 
 
 def make_project(filepath):
-    print
+    print()
     folder = _get_folder(filepath)
     site_automations_folder = _get_folder(folder + 'SiteAutomations')
     jobs_folder = _get_folder(folder + 'Jobs')
 
     if not isdir(folder):
-        print 'Creating Project: {}...'.format(folder)
+        print('Creating Project: {}...'.format(folder))
         mkdir(folder)
-        print 'Project folder created!!!'
+        print('Project folder created!!!')
     else:
-        print 'Project folder already exists...'
+        print('Project folder already exists...')
 
     make_init(folder)
 
-    print 'Creating SiteAutomations...'
+    print('Creating SiteAutomations...')
     create_module(site_automations_folder)
-    print 'Creating Jobs...'
+    print('Creating Jobs...')
     create_module(jobs_folder)
-    print 'Generating scaffold...'
+    print('Generating scaffold...')
     make_project_scaffold(filepath)
-    print
+    print()
     return True
 
 # Start main program

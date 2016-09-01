@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 
 class DummyLogger(object):
@@ -21,27 +22,27 @@ class DummyLogger(object):
 
     def info(self, *args):
         if self.prints and self.level >= 0:
-            print "INFO: {}".format(args)
+            print("INFO: {}".format(args))
         return self
 
     def debug(self, *args):
         if self.prints and self.level >= 1:
-            print "DEBUG: {}".format(args)
+            print("DEBUG: {}".format(args))
         return self
 
     def warn(self, *args):
         if self.prints and self.level >= 2:
-            print "WARN: {}".format(args)
+            print("WARN: {}".format(args))
         return self
 
     def error(self, *args):
         if self.prints and self.level >= 3:
-            print "ERROR: {}".format(args)
+            print("ERROR: {}".format(args))
         return self
 
     def fatal(self, *args):
         if self.prints and self.level >= 4:
-            print "FATAL: {}".format(args)
+            print("FATAL: {}".format(args))
         return self
 
 

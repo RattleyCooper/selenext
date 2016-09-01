@@ -1,3 +1,4 @@
+from __future__ import print_function
 from time import sleep
 # Database models used to interact with databases.
 from Project import Models
@@ -62,10 +63,10 @@ cmd2 = cmd_factory.create_command(lambda controller, *search_term: controller.do
 # Start the threads.  Each search will be executed, and it will
 # only take as long as the longest automation time.
 cmd1.start()
-print 'finished first search'
+print('finished first search')
 sleep(5)
 cmd2.start()
-print 'finished second search'
+print('finished second search')
 sleep(5)
 
 # Close the WebDrivers down.

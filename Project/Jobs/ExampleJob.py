@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 
 class SomethingToDo(object):
@@ -5,16 +6,16 @@ class SomethingToDo(object):
         self.some_object = some_object
 
     def start(self):
-        print 'Starting job.'
+        print('Starting job.')
         self.some_object.do_something('cool')
 
     def stop(self):
-        print 'Job done.'
+        print('Job done.')
 
 
 class SomeObject(object):
     def do_something(self, something):
-        print 'SomeObject doing something {}.'.format(something)
+        print('SomeObject doing something {}.'.format(something))
 
 
 # The start_job function is the only thing required

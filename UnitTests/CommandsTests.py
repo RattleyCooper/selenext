@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 
 from Helpers.Commands import ThreadedCommandFactory, Command, Kwargs
@@ -60,7 +61,7 @@ class ThreadedCommandFactoryTest(unittest.TestCase):
 
     def test_create_threads_with_invalid_inputs(self):
         def _(*args):
-            print args
+            print(args)
         self.assertRaises(TypeError, self.cmd.create_command, _, [1, 2, 3])
         self.assertRaises(TypeError, self.cmd.create_command, _, (1, 2, 3))
         self.assertRaises(TypeError, self.cmd.create_command, _, 234231)
@@ -70,8 +71,8 @@ class ThreadedCommandFactoryTest(unittest.TestCase):
 
     def test_create_threads_with_valid_input(self):
         def _(*args, **kwargs):
-            print args
-            print kwargs
+            print(args)
+            print(kwargs)
         command_pack = {
             'goog1': ('hello', Kwargs({'a': 1, 'b': 2, 'c': 3})),
             'goog2': ('hello world!',)

@@ -5,6 +5,7 @@ down using wildcard expressions, or regular expressions.
 The functionality here will be expanded in the future to include
 other filtering techniques.
 """
+from __future__ import print_function
 from re import match as rematch
 
 
@@ -161,7 +162,7 @@ class WebElementFilter(object):
         # Get the element attribute based on the input to the `attribute` method.
         if self._attribute_search:
             attr_value = element.get_attribute(self._attribute_search)
-            print 'attribute_search:', attr_value
+            print('attribute_search:', attr_value)
 
         # Get the elements inner text.
         if self._inner_text_search:
