@@ -2,10 +2,10 @@
 
 def run_job(module_name, *args, **kwargs):
     """
-    Run a job by name.
+    Run a job by name.  Any *args and **kwargs will be passed to the
+    given module's `start_job` function.
 
     :param module_name:
-    :param args:
     :return:
     """
 
