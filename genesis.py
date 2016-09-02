@@ -16,7 +16,7 @@ from __future__ import print_function
 
 import sys
 from os import mkdir
-from os.path import isfile, isdir
+from os.path import isfile, isdir, expanduser
 
 
 def write_stub(filepath, stub, append_py=True):
@@ -185,6 +185,7 @@ def make_init(filepath):
 
 
 def make_project(filepath):
+    filepath = expanduser(filepath)
     print()
     folder = _get_folder(filepath)
     site_automations_folder = _get_folder(folder + 'SiteAutomations')

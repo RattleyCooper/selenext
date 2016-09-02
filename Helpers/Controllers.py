@@ -8,8 +8,11 @@ def randomly_waits(function):
     """
     A decorator for waiting a random amount of time(1-3 seconds) after function execution.
 
-    :param function:
-    :return:
+    Args:
+        function: function
+
+    Returns:
+        random_wait_decorator
     """
 
     def random_wait_decorator(*args, **kwargs):
@@ -25,8 +28,11 @@ def waits1(function):
     """
     A decorator for waiting 1 second after function execution.  Great for waiting between actions.
 
-    :param function:
-    :return:
+    Args:
+        function: function
+
+    Returns:
+        wait_decorator: function
     """
 
     def wait_decorator(*args, **kwargs):
@@ -40,8 +46,11 @@ def waits2(function):
     """
     A decorator for waiting 2 seconds after function execution.  Great for waiting between actions.
 
-    :param function:
-    :return:
+    Args:
+        function: function
+
+    Returns:
+        wait_decorator: function
     """
 
     def wait_decorator(*args, **kwargs):
@@ -55,8 +64,11 @@ def waits3(function):
     """
     A decorator for waiting 3 seconds after function execution.  Great for waiting between actions.
 
-    :param function:
-    :return:
+    Args:
+        function: function
+
+    Returns:
+        wait_decorator: function
     """
 
     def wait_decorator(*args, **kwargs):
@@ -66,19 +78,22 @@ def waits3(function):
     return wait_decorator
 
 
-def has_kwargs(func):
+def has_kwargs(function):
     """
     Decorator for passing **kwargs with your *args through the use of
     the Kwargs object.  Note that only 1 Kwargs object can be passed
     with the *args to the decorated function.  Any additional Kwargs
     objects will be ignored.
 
-    :param func:
-    :return:
+    Args:
+        function: function
+
+    Returns:
+        kwargsable: function
     """
 
     # Define a local function within has_kwargs
-    def _process(*args, **kwargs):
+    def kwargsable(*args, **kwargs):
         args = list(args)
         # Extract kwargs from args.
         d_args = [thing for thing in args if type(thing) == Kwargs]
@@ -91,7 +106,7 @@ def has_kwargs(func):
                 d_args = d_args[0]  # Pop the Kwargs instance off the list
             except IndexError:
                 # func is equal to some_controller_func
-                return func(*args, **{})
+                return function(*args, **{})
 
         # Remove kwargs from args
         args = [item for item in args if type(item) != Kwargs]
@@ -100,10 +115,10 @@ def has_kwargs(func):
         if kwargs_len == 0:
             kwargs = {k: v for (k, v) in d_args}
         # Execute the func, which is some_controller_func
-        return func(*args, **kwargs)
+        return function(*args, **kwargs)
 
     # Return the local callable function `_process`
-    return _process
+    return kwargsable
 
 
 class IndependentController(object):
@@ -115,9 +130,12 @@ class IndependentController(object):
         Drivers must be attached after the controller has been instantiated so each controller has
         its own driver.  This will also attach a WebDriverWait to the class instance.
 
-        :param driver:
-        :param timeout:
-        :return:
+        Args:
+            driver: Selenium WebDriver
+            timeout: int
+
+        Returns:
+            self
         """
 
         self.driver = driver
