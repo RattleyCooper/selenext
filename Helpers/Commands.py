@@ -40,7 +40,10 @@ class Kwargs(object):
         del self.dictionary[key]
 
     def __iter__(self):
-        return self.dictionary.iteritems()
+        try:
+            return self.dictionary.iteritems()
+        except AttributeError:
+            return self.dictionary.items()
 
 
 class BaseCommandFactory(object):
@@ -95,7 +98,10 @@ class BaseCommandFactory(object):
         del self.controllers[key]
 
     def __iter__(self):
-        return self.controllers.iteritems()
+        try:
+            return self.controllers.iteritems()
+        except AttributeError:
+            return self.controllers.items()
 
     def _attach_drivers(self):
         """
@@ -103,7 +109,13 @@ class BaseCommandFactory(object):
 
         :return:
         """
-        for key, args in self.controllers.iteritems():
+
+        try:
+            items = self.controllers.iteritems()
+        except AttributeError:
+            items = self.controllers.items()
+
+        for key, args in items:
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
 
@@ -127,8 +139,14 @@ class BaseCommandFactory(object):
         :return: None
         """
 
-        for key, controller in self.controllers.iteritems():
+        try:
+            items = self.controllers.iteritems()
+        except AttributeError:
+            items = self.controllers.items()
+
+        for key, controller in items:
             self._shutdown_driver(key)
+        return None
 
 
 class ThreadedCommandFactory(BaseCommandFactory):
@@ -174,7 +192,13 @@ class ThreadedCommandFactory(BaseCommandFactory):
             raise TypeError('Expected a dictionary for the command_pack variable.')
 
         self.logger.info('Creating threads.')
-        for key, args in command_pack.iteritems():
+
+        try:
+            items = command_pack.iteritems()
+        except AttributeError:
+            items = command_pack.items()
+
+        for key, args in items:
             args = (self.controllers[key],) + args
             thread = threading.Thread(target=target, args=args)
             self.pool.append(thread)
@@ -200,7 +224,13 @@ class CommandFactory(BaseCommandFactory):
             raise TypeError('Expected a dictionary for the command_pack variable.')
 
         self.logger.info('Creating command.')
-        for key, args in command_pack.iteritems():
+
+        try:
+            items = command_pack.iteritems()
+        except AttributeError:
+            items = command_pack.items()
+
+        for key, args in items:
             args = (self.controllers[key],) + args
             thread = DummyThread(target=target, args=args)
             self.pool.append(thread)
