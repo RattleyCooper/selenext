@@ -41,9 +41,11 @@ class Kwargs(object):
 
     def __iter__(self):
         try:
-            return self.dictionary.iteritems()
+            for k, v in self.dictionary.iteritems():
+                yield k, v
         except AttributeError:
-            return self.dictionary.items()
+            for k, v in self.dictionary.items():
+                yield k, v
 
 
 class BaseCommandFactory(object):
@@ -99,9 +101,11 @@ class BaseCommandFactory(object):
 
     def __iter__(self):
         try:
-            return self.controllers.iteritems()
+            for k, v in self.controllers.iteritems():
+                yield k, v
         except AttributeError:
-            return self.controllers.items()
+            for k, v in self.controllers.items():
+                yield k, v
 
     def _attach_drivers(self):
         """
