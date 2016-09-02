@@ -6,7 +6,8 @@ This file is used to migrate database tables to the database.
 def migrate(models):
     """
     Run database migrations for the defined models.
-    :return:
+
+    :return: None
     """
     models_pieces = [
         'BareField', 'BigIntegerField', 'BinaryField', 'BlobField',
@@ -42,6 +43,7 @@ def migrate(models):
         pass
     db.create_tables(migrations)
     db.close()
+    return
 
 if __name__ == '__main__':
     pass
