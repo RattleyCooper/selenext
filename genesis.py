@@ -1,15 +1,5 @@
 """
-genesis.py is used for creating program stubs and running middleware.
-
-That is about it so far.
-
-Commands are:
-    python genesis.py make:threaded-stub {filename}
-    python genesis.py make:managed-stub {filename}
-    python genesis.py make:stub {filename}
-    python genesis.py run:migrations
-    # Custom jobs are supported as well.
-    python genesis.py run:{JobName}
+genesis.py is used for creating new Slack projects and writing program stubs.
 """
 
 from __future__ import print_function
