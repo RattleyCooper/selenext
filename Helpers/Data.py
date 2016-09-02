@@ -11,7 +11,7 @@ def levenshtein_distance(s1, s2):
         s2: string
 
     Returns:
-        float
+        int
 
     """
 
@@ -35,8 +35,8 @@ def levenshtein_distance(s1, s2):
                     )
                 )
         distances = new_distances
-
-    return distances[-1]
+    distance = distances[-1]
+    return distance
 
 
 def string_similarity(s1, s2):
@@ -47,23 +47,22 @@ def string_similarity(s1, s2):
         s1: string
         s2: string
 
-    Returns:
-        float
+    Returns: float
     """
 
     return SequenceMatcher(None, s1, s2).ratio()
 
 
-def haversine(lat1, lon1, lat2, lon2):
+def haversine(lat1, lon1, lat2, lon2, units='metric'):
     """
 
     Args:
-        lat1:
-        lon1:
-        lat2:
-        lon2:
+        lat1: float
+        lon1: float
+        lat2: float
+        lon2: float
 
-    Returns:
+    Returns: float
 
     """
     earth_radius = 6372.8  # Earth radius in kilometers
@@ -76,5 +75,18 @@ def haversine(lat1, lon1, lat2, lon2):
     a = sin(d_lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(d_lon / 2) ** 2
     c = 2 * asin(sqrt(a))
 
-    return earth_radius * c
+    km = earth_radius * c
 
+    if units == 'metric':
+        return km
+    elif units == 'imperial':
+        # Return miles.
+        return km / 1.609344
+    else:
+        return km
+
+
+# if __name__ == '__main__':
+#     print haversine(45.5231, 122.6765, 39.7392, 104.9903, units='imperial')
+#     print string_similarity('Hello World', 'Hello WOrld!')
+#     print levenshtein_distance('Hello World', 'Hello WOrld!')
