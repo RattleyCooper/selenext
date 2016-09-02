@@ -122,9 +122,9 @@ class BaseCommandFactory(object):
 
     def shutdown(self):
         """
-        Shut down teh WebDriver instances.
+        Shut down the WebDriver instances.
 
-        :return:
+        :return: None
         """
 
         for key, controller in self.controllers.iteritems():
@@ -165,9 +165,9 @@ class ThreadedCommandFactory(BaseCommandFactory):
         cmd = m.create_command(do_login, do_login_command)
         cmd.start()
 
-        :param target:
-        :param command_pack:
-        :return:
+        :param target: function
+        :param command_pack: dict
+        :return: Command
         """
 
         if type(command_pack) != dict:
@@ -190,10 +190,10 @@ class CommandFactory(BaseCommandFactory):
         """
         Create a command that will execute jobs one by one.
 
-        :param target:
-        :param command_pack:
-        :param dummy_logger_prints:
-        :return:
+        :param target: function
+        :param command_pack: dict
+        :param dummy_logger_prints: bool
+        :return: Command
         """
 
         if type(command_pack) != dict:
@@ -241,9 +241,9 @@ class Command(object):
         """
         Start the threads in the thread pool.
 
-        :param dump_pool:
-        :param join_threads:
-        :return:
+        :param dump_pool: bool
+        :param join_threads: bool
+        :return: self
         """
 
         self.logger.info('Starting command.')
@@ -262,7 +262,7 @@ class Command(object):
         """
         Remove the threads from the thread pool.
 
-        :return:
+        :return: self
         """
 
         self.pool = []
