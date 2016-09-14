@@ -141,3 +141,29 @@ class IndependentController(object):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, timeout)
         return self
+
+    def call(self, method_name, *args, **kwargs):
+        """
+        Call one of the controller's methods with the given *args or **kwargs
+
+        Args:
+            method_name:
+            *args:
+            **kwargs:
+
+        Returns:
+            method results
+        """
+
+        # Grab the method from self.
+        method = getattr(self, method_name)
+
+        # Determine how to call the method and return the results.
+        if args and kwargs:
+            return method(*args, **kwargs)
+        elif args and not kwargs:
+            return method(*args)
+        elif kwargs and not args:
+            return method(**kwargs)
+        else:
+            return method()
