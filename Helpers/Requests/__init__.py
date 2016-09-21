@@ -7,20 +7,10 @@ from .Exceptions import NoSuchElementException
 
 class WebElement(object):
     def __init__(self, soup, response, url, parent=None):
-        if soup is None:
-            if response is not None:
-                self.soup = BeautifulSoup(response, 'html.parser')
-                tag = None
-                for thing in self.soup.children:
-                    tag = getattr(self.soup, thing.name)
-                    # If we don't have a valid tag object, then continue looking.
-                    if not tag or tag is None:
-                        continue
-                    break
 
-                self.soup = tag
-        else:
-            self.soup = soup
+        self.soup = None
+        self.make_soup(soup, response)
+
         self.tag_name = self.soup.name if self.soup is not None else None
         self.text = self.soup.text if self.soup is not None else None
         try:
@@ -40,6 +30,26 @@ class WebElement(object):
 
     def __getitem__(self, item):
         return self.soup[item]
+
+    def make_soup(self, soup, response):
+        if soup is None:
+            if response is not None:
+                soup = BeautifulSoup(response, 'html.parser')
+                tag = None
+                for thing in soup.children:
+                    tag = getattr(soup, thing.name)
+                    # If we don't have a valid tag object, then continue looking.
+                    if not tag or tag is None:
+                        continue
+                    break
+
+                self.soup = tag
+            else:
+                raise ValueError('response must be valid HTML, got {} instead.'.format(response))
+        else:
+            self.soup = soup
+
+        return self
 
     def clear(self, *args, **kwargs):
         # raise InteractionException('Requests WebElements do not support clearing/interacting with inputs.')
