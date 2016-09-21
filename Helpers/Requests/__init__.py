@@ -145,11 +145,37 @@ class WebElement(object):
         return output_elements
 
 
+class WebHistory(object):
+    def __init__(self):
+        self.index = -1
+        self.history = []
+
+    def __getitem__(self, item):
+        return self.history[item]
+
+    def current_url(self):
+        return self.history[self.index]
+
+    def register(self, url):
+        self.history.append(url)
+        self.index += 1
+
+    def back(self):
+        self.index -= 1
+        return self.history[self.index]
+
+    def forward(self):
+        self.index += 1
+        return self.history[self.index]
+
+
 class WebReader(WebElement):
     def __init__(self):
         self.soup = None
         self.current_response = None
         self.current_url = None
+
+        self.web_history = WebHistory()
 
         self.size = 0, 0
         self.location = 0, 0
@@ -161,7 +187,41 @@ class WebReader(WebElement):
 
         super(WebReader, self).__init__(None, None, None)
 
-    def get(self, url):
+    def back(self):
+        """
+        Navigate to the last place in the web history.
+
+        Returns:
+            self
+        """
+
+        self.get(self.web_history.back())
+        return self
+
+    def forward(self):
+        """
+        Navigate to the next place in the web history.
+
+        Returns:
+            self
+        """
+
+        self.get(self.web_history.forward())
+        return self
+
+    def get(self, url, add_to_history=True):
+        """
+        Get a response for the given url.
+
+        Args:
+            url:
+            add_to_history:
+
+        Returns:
+            str
+        """
+        if add_to_history:
+            self.web_history.register(url)
         self.current_url = url
         self.current_response = requests.get(url).text.strip()
 
@@ -176,3 +236,13 @@ class WebReader(WebElement):
         self.soup = BeautifulSoup(self.current_response, 'html.parser')
 
         return self.current_response
+    def refresh(self):
+        """
+        Grab the current_url again.
+
+        Returns:
+            self
+        """
+
+        self.get(self.web_history.current_url(), add_to_history=False)
+        return self
