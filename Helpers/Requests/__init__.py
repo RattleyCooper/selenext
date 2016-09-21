@@ -44,8 +44,6 @@ class WebElement(object):
                     break
 
                 self.soup = tag
-            else:
-                raise ValueError('response must be valid HTML, got {} instead.'.format(response))
         else:
             self.soup = soup
 
