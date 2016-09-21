@@ -198,6 +198,16 @@ class WebReader(WebElement):
         self.get(self.web_history.back())
         return self
 
+    def close(self):
+        """
+        Does nothing.  Is just a placeholder method.
+
+        Returns:
+            self
+        """
+
+        return self
+
     def forward(self):
         """
         Navigate to the next place in the web history.
@@ -236,6 +246,17 @@ class WebReader(WebElement):
         self.soup = BeautifulSoup(self.current_response, 'html.parser')
 
         return self.current_response
+
+    def quit(self):
+        """
+        Does nothing.  Is just a placeholder method.
+
+        Returns:
+            self
+        """
+
+        return self
+
     def refresh(self):
         """
         Grab the current_url again.
