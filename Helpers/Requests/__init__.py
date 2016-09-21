@@ -154,17 +154,49 @@ class WebHistory(object):
         return self.history[item]
 
     def current_url(self):
+        """
+        Get the current index's url.
+
+        Returns:
+            str
+        """
+
         return self.history[self.index]
 
     def register(self, url):
+        """
+        Register a url with the history list.
+
+        Args:
+            url:
+                str
+        Returns:
+            self
+        """
+
         self.history.append(url)
         self.index += 1
+        return self
 
     def back(self):
+        """
+        Move the pointer back in the history and return the url for that new index.
+
+        Returns:
+            str
+        """
+
         self.index -= 1
         return self.history[self.index]
 
     def forward(self):
+        """
+        Move the pointer forward in the history and return the url for that new index.
+
+        Returns:
+            str
+        """
+
         self.index += 1
         return self.history[self.index]
 
@@ -230,6 +262,7 @@ class WebReader(WebElement):
         Returns:
             str
         """
+        
         if add_to_history:
             self.web_history.register(url)
         self.current_url = url
