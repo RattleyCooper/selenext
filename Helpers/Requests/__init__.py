@@ -51,38 +51,11 @@ class WebElement(object):
 
         return self
 
-    def clear(self, *args, **kwargs):
-        # raise InteractionException('Requests WebElements do not support clearing/interacting with inputs.')
-        return self
-
-    def click(self, *args, **kwargs):
-        # raise InteractionException('Requests WebElements do not support clicking.')
-        return self
-
-    def send_keys(self, *args, **kwargs):
-        # raise InteractionException('Requests WebElements do not support sending keys.')
-        return self
-
-    def submit(self, *args, **kwargs):
-        return self
-
-    def screenshot(self, *args, **kwargs):
-        raise AttributeError('Requests WebElements does not support screenshots.')
-
     def get_attribute(self, attribute, **kwargs):
         return self.soup[attribute]
 
     def value_of_css_property(self, name):
         return None
-
-    def is_selected(self):
-        return True
-
-    def is_enabled(self):
-        return True
-
-    def is_displayed(self):
-        return True
 
     def find_element_by_id(self, element_id):
         ele = self.soup.find(id=element_id)
@@ -126,7 +99,7 @@ class WebElement(object):
         print(self.current_response)
         return WebElement(None, self.current_response, self.current_url, parent=self.id)
 
-    # %%%%%%%%%%%%%%%%%%% Find elements %%%%%%%%%%%%%%%%%%%
+    # %%%%%%%%%%%%%%%%%%% Find elements %%%%%%%%%%%%%%%%%%% #
     def find_elements_by_id(self, element_id):
         resp = self.current_response
         url = self.current_url
