@@ -10,8 +10,10 @@ class WebElement(object):
         if soup is None:
             if response is not None:
                 self.soup = BeautifulSoup(response, 'html.parser')
+                tag = None
                 for thing in self.soup.children:
                     tag = getattr(self.soup, thing.name)
+                    # If we don't have a valid tag object, then continue looking.
                     if not tag or tag is None:
                         continue
                     break
