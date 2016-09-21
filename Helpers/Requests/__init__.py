@@ -262,7 +262,7 @@ class WebReader(WebElement):
         Returns:
             str
         """
-        
+
         if add_to_history:
             self.web_history.register(url)
         self.current_url = url
