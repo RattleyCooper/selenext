@@ -6,6 +6,13 @@ from .Exceptions import NoSuchElementException
 
 
 class WebElement(object):
+    """
+    The Requests WebElement behaves very much like a selenium WebElement
+    except that it does not provide any methods for interaction like
+    clicking and sending keys.  DOM Traversal and data extraction
+    methods are provided, and attributes like WebElement.text
+    are available.
+    """
     def __init__(self, soup, response, url, parent=None):
 
         self.soup = None
