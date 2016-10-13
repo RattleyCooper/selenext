@@ -23,11 +23,14 @@ be a pip install available.
 
 ## Dependencies
 
-For using anything that requires selenium or database interaction, you
-will need:
+Slack is pretty modular, so you should only need the dependencies for
+the pieces you are using.  For database interaction, install:
 
 * [peewee](http://docs.peewee-orm.com/en/latest/)
 `pip install peewee` + installing peewee's dependencies.
+
+You'll need Selenium for doing any browser automation or web scraping. 
+
 * [selenium python bindings](http://selenium-python.readthedocs.org/)
 `pip install selenium`
 
