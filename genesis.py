@@ -256,6 +256,23 @@ def make_init(directory):
     return None
 
 
+def make_gitignore(directory):
+    """
+    Create the .gitignore file.
+    Args:
+        directory:
+
+    Returns:
+        None
+    """
+    gitignore_path = directory + '.gitignore'
+    if not isfile(gitignore_path):
+        print('Creating .gitignore...')
+        write_stub(gitignore_path, '.env')
+        print('.gitignore created...')
+    return None
+
+
 def make_project(directory):
     """
     Create a new Slack project in the given directory.
@@ -280,6 +297,7 @@ def make_project(directory):
         print('Project folder already exists...')
 
     make_init(folder)
+    make_gitignore(folder)
 
     print('Creating SiteAutomations...')
     create_module(site_automations_folder)
