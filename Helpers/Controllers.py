@@ -1,4 +1,4 @@
-from random import randint
+from random import uniform
 from time import sleep
 from .Commands import Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 def randomly_waits(function):
     """
-    A decorator for waiting a random amount of time(1-3 seconds) after function execution.
+    A decorator for waiting a random amount of time(0.1-3.01 seconds) after function execution.
 
     Args:
         function: function
@@ -19,7 +19,7 @@ def randomly_waits(function):
         # Execute function and grab result
         function_result = function(*args, **kwargs)
         # Sleep
-        sleep(randint(1, 3))
+        sleep(uniform(0.01, 3.01))
         return function_result
     return random_wait_decorator
 
@@ -141,3 +141,29 @@ class IndependentController(object):
         self.driver = driver
         self.wait = WebDriverWait(self.driver, timeout)
         return self
+
+    def call(self, method_name, *args, **kwargs):
+        """
+        Call one of the controller's methods with the given *args or **kwargs
+
+        Args:
+            method_name:
+            *args:
+            **kwargs:
+
+        Returns:
+            method results
+        """
+
+        # Grab the method from self.
+        method = getattr(self, method_name)
+
+        # Determine how to call the method and return the results.
+        if args and kwargs:
+            return method(*args, **kwargs)
+        elif args and not kwargs:
+            return method(*args)
+        elif kwargs and not args:
+            return method(**kwargs)
+        else:
+            return method()

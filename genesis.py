@@ -1,15 +1,5 @@
 """
-genesis.py is used for creating program stubs and running middleware.
-
-That is about it so far.
-
-Commands are:
-    python genesis.py make:threaded-stub {filename}
-    python genesis.py make:managed-stub {filename}
-    python genesis.py make:stub {filename}
-    python genesis.py run:migrations
-    # Custom jobs are supported as well.
-    python genesis.py run:{JobName}
+genesis.py is used for creating new Slack projects and writing program stubs.
 """
 
 from __future__ import print_function
@@ -20,16 +10,38 @@ from os.path import isfile, isdir, expanduser
 
 
 def write_stub(filepath, stub, append_py=True):
+    """
+    Write a stub to the given filepath.
+
+    Args:
+        filepath: string
+        stub: string
+        append_py: bool
+
+    Returns:
+        None
+    """
+
     if append_py:
         if filepath[-3:] != '.py':
             filepath += '.py'
     with open(filepath, 'w') as f:
         f.write(stub)
         f.close()
-    return True
+    return
 
 
 def make_threaded_stub(filepath):
+    """
+    Create a stub with a ThreadedCommandFactory instance for multi-threaded automations.
+
+    Args:
+        filepath: string
+
+    Returns:
+        None
+    """
+
     stub = """from time import sleep
 from Project import Models
 from Config.Environment import env
@@ -52,10 +64,20 @@ some_command = {
 cmd = command_factory.create_command(, some_command)
 """
     write_stub(filepath, stub)
-    return True
+    return
 
 
 def make_stub(filepath):
+    """
+    Create a stub for a simple automation.
+
+    Args:
+        filepath: string
+
+    Returns:
+        None
+    """
+    
     stub = """from time import sleep
 from Project import Models
 from Config.Environment import env, env_driver
@@ -68,10 +90,20 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     pass
 """
     write_stub(filepath, stub)
-    return True
+    return
 
 
 def make_managed_stub(filepath):
+    """
+    Creates a stub with a command factory instance for managing automations.
+
+    Args:
+        filepath: string
+
+    Returns:
+        None
+    """
+
     stub = """from time import sleep
 from Project import Models
 from Config.Environment import env
@@ -94,10 +126,20 @@ some_command = {
 cmd = command_factory.create_command(, some_command)
 """
     write_stub(filepath, stub)
-    return True
+    return
 
 
 def _get_folder(filepath):
+    """
+    Handles adding a / or \\ to the end of a directory path.
+
+    Args:
+        filepath: string
+
+    Returns:
+        string
+    """
+
     if '/' in filepath:
         folder = filepath if filepath[-1] == '/' else filepath + '/'
     elif '\\' in filepath:
@@ -107,7 +149,19 @@ def _get_folder(filepath):
     return folder
 
 
-def make_project_scaffold(filepath):
+def make_project_scaffold(directory):
+    """
+    Create the project scaffold in the given directory.
+
+    Creates the .env, migrations.py, models.py and main.py files.
+
+    Args:
+        directory: string
+
+    Returns:
+        None
+    """
+
     print()
     env_stub = """# Browsers: chrome, firefox, safari, phantomjs, opera
 BROWSER=chrome
@@ -139,7 +193,7 @@ class BaseModel(Model):
         database = db
 """
 
-    folder = _get_folder(filepath)
+    folder = _get_folder(directory)
 
     env_filename = folder + '.env'
     migrations_filename = folder + 'migrations.py'
@@ -163,31 +217,75 @@ class BaseModel(Model):
         write_stub(main_filename, '')
         print('main.py file writte...')
     print()
-    return True
+    return
 
 
-def create_module(filepath):
-    if not isdir(filepath):
+def create_module(directory):
+    """
+    Create a python module with the given directory path.
+
+    Args:
+        directory: string
+
+    Returns:
+        None
+    """
+    if not isdir(directory):
         print('Creating module folder...')
-        mkdir(filepath)
+        mkdir(directory)
         print('Module folder created...')
-    make_init(filepath)
-    return True
+    make_init(directory)
+    return
 
 
-def make_init(filepath):
-    init_filepath = filepath + '__init__.py'
+def make_init(directory):
+    """
+    Create the __init__.py file.
+
+    Args:
+        directory: string
+
+    Returns:
+        None
+    """
+    init_filepath = directory + '__init__.py'
     if not isfile(init_filepath):
         print('Creating __init__.py...')
         write_stub(init_filepath, '')
         print('__init__.py created...')
-    return True
+    return None
 
 
-def make_project(filepath):
-    filepath = expanduser(filepath)
+def make_gitignore(directory):
+    """
+    Create the .gitignore file.
+    Args:
+        directory:
+
+    Returns:
+        None
+    """
+    gitignore_path = directory + '.gitignore'
+    if not isfile(gitignore_path):
+        print('Creating .gitignore...')
+        write_stub(gitignore_path, '.env')
+        print('.gitignore created...')
+    return None
+
+
+def make_project(directory):
+    """
+    Create a new Slack project in the given directory.
+
+    Args:
+        directory: string
+
+    Returns:
+        None
+    """
+    directory = expanduser(directory)
     print()
-    folder = _get_folder(filepath)
+    folder = _get_folder(directory)
     site_automations_folder = _get_folder(folder + 'SiteAutomations')
     jobs_folder = _get_folder(folder + 'Jobs')
 
@@ -199,15 +297,16 @@ def make_project(filepath):
         print('Project folder already exists...')
 
     make_init(folder)
+    make_gitignore(folder)
 
     print('Creating SiteAutomations...')
     create_module(site_automations_folder)
     print('Creating Jobs...')
     create_module(jobs_folder)
     print('Generating scaffold...')
-    make_project_scaffold(filepath)
+    make_project_scaffold(directory)
     print()
-    return True
+    return
 
 # Start main program
 if __name__ == '__main__':
@@ -221,7 +320,6 @@ if __name__ == '__main__':
 
         command = None
         value = None
-        the_flag = None
 
         if arg_len == 1:
             command = args[0]

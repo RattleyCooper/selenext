@@ -15,7 +15,10 @@ class GMailer:
         if type(host) != str and type(host) != unicode:
             raise TypeError('A string was expected for the host variable.')
         if type(port) != int:
-            raise TypeError('A integer was expected for the port variable.')
+            try:
+                port = int(port)
+            except ValueError:
+                raise TypeError('An integer was expected for the port variable.')
 
         self.username = username
         self.password = password

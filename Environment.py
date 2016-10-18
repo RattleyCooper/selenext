@@ -10,7 +10,6 @@ __SLACK_FRAMEWORK_ENV_PATH += '/.env' if __SLACK_FRAMEWORK_ENV_PATH[-1] != '/' e
 
 
 class ConfigLoader:
-    """ Create a mapping of the  """
     def __init__(self, filepath='.env'):
         self.lines = {}
         with open(filepath, 'r') as f:
@@ -22,6 +21,15 @@ class ConfigLoader:
                     self.lines[line_pieces[0]] = '='.join(line_pieces[1:]).strip()
 
     def get(self, variable_name):
+        """
+
+        Args:
+            variable_name: string
+
+        Returns:
+            string
+        """
+
         return self.lines[variable_name]
 
 # We use a global variable for the resource loader so that we are not constantly opening
@@ -31,13 +39,29 @@ __SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigLoader(filepath=__SLACK_FRAMEWORK_ENV_
 
 
 def env(variable_name):
-    """ Get the corresponding environment variable. """
+    """
+    Get the corresponding environment variable.
+
+    Args:
+        variable_name: string
+
+    Returns:
+        string
+    """
 
     return __SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name)
 
 
 def env_driver(browser):
-    """ Return the web driver. """
+    """
+    Return the web driver.
+
+    Args:
+        browser: string
+
+    Returns:
+        selenium WebDriver
+    """
     from selenium import webdriver
 
     the_driver = False
@@ -60,7 +84,15 @@ def env_driver(browser):
 
 
 def get_database(db_type):
-    """ Get the database object that should be used. """
+    """
+    Get the database object that should be used.
+
+    Args:
+        db_type: string
+
+    Returns:
+        peewee database driver.
+    """
 
     db = False
     if db_type == 'sql':
