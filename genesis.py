@@ -320,7 +320,6 @@ if __name__ == '__main__':
 
         command = None
         value = None
-        the_flag = None
 
         if arg_len == 1:
             command = args[0]
