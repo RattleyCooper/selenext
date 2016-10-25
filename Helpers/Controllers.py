@@ -22,7 +22,6 @@ for __ in range(1, 61):
         sleep({})
         return function_result
     return wait_decorator'''.format(__, __, __))
-print('done')
 
 
 def randomly_waits(function):
