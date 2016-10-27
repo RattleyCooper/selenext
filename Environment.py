@@ -139,7 +139,7 @@ def env_driver(browser):
     Returns:
         selenium WebDriver
     """
-    
+
     from selenium import webdriver
 
     the_driver = False
