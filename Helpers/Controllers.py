@@ -4,6 +4,26 @@ from .Commands import Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
 
 
+# Generate a bunch of decorators for waiting up to 60 seconds.
+for __ in range(1, 61):
+    exec('''def waits{}(function):
+    """
+    A decorator for waiting {} second after function execution.  Great for waiting between actions.
+
+    Args:
+        function: function
+
+    Returns:
+        wait_decorator: function
+    """
+
+    def wait_decorator(*args, **kwargs):
+        function_result = function(*args, **kwargs)
+        sleep({})
+        return function_result
+    return wait_decorator'''.format(__, __, __))
+
+
 def randomly_waits(function):
     """
     A decorator for waiting a random amount of time(0.1-3.01 seconds) after function execution.
@@ -22,60 +42,6 @@ def randomly_waits(function):
         sleep(uniform(0.01, 3.01))
         return function_result
     return random_wait_decorator
-
-
-def waits1(function):
-    """
-    A decorator for waiting 1 second after function execution.  Great for waiting between actions.
-
-    Args:
-        function: function
-
-    Returns:
-        wait_decorator: function
-    """
-
-    def wait_decorator(*args, **kwargs):
-        function_result = function(*args, **kwargs)
-        sleep(1)
-        return function_result
-    return wait_decorator
-
-
-def waits2(function):
-    """
-    A decorator for waiting 2 seconds after function execution.  Great for waiting between actions.
-
-    Args:
-        function: function
-
-    Returns:
-        wait_decorator: function
-    """
-
-    def wait_decorator(*args, **kwargs):
-        function_result = function(*args, **kwargs)
-        sleep(2)
-        return function_result
-    return wait_decorator
-
-
-def waits3(function):
-    """
-    A decorator for waiting 3 seconds after function execution.  Great for waiting between actions.
-
-    Args:
-        function: function
-
-    Returns:
-        wait_decorator: function
-    """
-
-    def wait_decorator(*args, **kwargs):
-        function_result = function(*args, **kwargs)
-        sleep(3)
-        return function_result
-    return wait_decorator
 
 
 def has_kwargs(function):

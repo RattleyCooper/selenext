@@ -12,13 +12,162 @@ __SLACK_FRAMEWORK_ENV_PATH += '/.env' if __SLACK_FRAMEWORK_ENV_PATH[-1] != '/' e
 class ConfigLoader:
     def __init__(self, filepath='.env'):
         self.lines = {}
+        self.list_mode = False
+        self.list_name = None
+        self.dict_mode = False
+        self.dict_name = None
+        self.sline = None
         with open(filepath, 'r') as f:
+
             for line in f:
+                self.sline = line.strip()
+
+                # Handle comments.
                 if line[0] == '#':
                     continue
+
+                # Handle dict mode.
+                if self.dict_mode:
+                    if self.sline == self.dict_name + '{END}':
+                        if self.dict_name not in self.lines.keys():
+                            self.lines[self.dict_name] = {}
+                        self.dict_mode = False
+                        self.dict_name = None
+                        continue
+
+                    self.process_dict_line(line, self.dict_name)
+                    continue
+
+                # Handle list mode.
+                if self.list_mode:
+                    if self.sline == '{}[END]'.format(self.list_name):
+                        if self.list_name not in self.lines.keys():
+                            self.lines[self.list_name] = []
+                        self.list_name = None
+                        self.list_mode = False
+                        continue
+                    try:
+                        self.lines[self.list_name].append(self.sline)
+                    except KeyError:
+                        self.lines[self.list_name] = [self.sline]
+                    continue
+
+                # Handle key=value lines.
                 if '=' in line:
-                    line_pieces = line.split('=')
-                    self.lines[line_pieces[0]] = '='.join(line_pieces[1:]).strip()
+                    self.process_key_value(line)
+                    continue
+
+                # Handle list definitions.
+                if self.sline[-3:] == '[]:':
+                    self.list_mode = True
+                    self.list_name = self.sline[:-3]
+                    continue
+
+                # Handle dict definitions.
+                if self.sline[-3:] == '{}:':
+                    self.dict_mode = True
+                    self.dict_name = self.sline[:-3]
+                    continue
+
+    def check_for_list_mode(self, line):
+        """
+        Check to see if the line is defining a list or not.  If it does, it will return
+        the lists name and the bool representing whether it is in list mode or not.
+
+        Args:
+            line:
+
+        Returns:
+            tuple
+        """
+
+        self.list_name = self.sline[:-3]
+        self.list_mode = True if self.sline[-3:] == '[]:' else False
+        return self.list_name, self.list_mode
+
+    def check_for_dict_mode(self, line):
+        """
+        Check to see if the line is defining a dictionary or not.  If it does, it will return
+        the dictionaries name and the bool representing whether it is in dict mode or not.
+
+        Args:
+            line:
+
+        Returns:
+            tuple
+        """
+
+        self.dict_name = self.sline[:-3]
+        self.dict_mode = True if self.sline[-3:] == '{}:' else False
+        return self.dict_name, self.dict_mode
+
+    def get_key_value(self, line):
+        """
+        Get the key and value from the given line, assuming it's separated by the first = sign.
+
+        Args:
+            line:
+
+        Returns:
+
+        """
+
+        line_pieces = self.sline.split('=')
+        key = line_pieces[0]
+        # Safely grab the value.  If the value contains an = symbol, it should
+        # not get mangled, and data should not be missing
+        value = '='.join(line_pieces[1:]).strip()
+
+        return key, value
+
+    def process_dict_line(self, line, dict_name):
+        """
+        Process a line that occurs within a dict that is being defined in the .env file.
+
+        Args:
+            line:
+            dict_name:
+
+        Returns:
+            self
+        """
+
+        key, value = self.get_key_value(line)
+        try:
+            self.lines[dict_name][key] = value
+        except KeyError:
+            self.lines[dict_name] = {key: value}
+        return self
+
+    def process_key_value(self, line):
+        """
+        Process a key=value from the given line.
+
+        Args:
+            line:
+
+        Returns:
+            self
+        """
+
+        key, value = self.get_key_value(line)
+        self.add_root_key(key, value)
+        return self
+
+    def add_root_key(self, key, value):
+        """
+        Add a key to self.lines with the given value.
+
+        Args:
+            key:
+            value:
+
+        Returns:
+            self
+        """
+
+        self.lines[key] = value
+        return self
 
     def get(self, variable_name):
         """
@@ -38,18 +187,21 @@ class ConfigLoader:
 __SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigLoader(filepath=__SLACK_FRAMEWORK_ENV_PATH)
 
 
-def env(variable_name):
+def env(variable_name, func=lambda x: x if x else x):
     """
-    Get the corresponding environment variable.
+    Get the corresponding environment variable.  Pass a function
+    like `int` or `bool` as the `type_hint` keyword argument to
+    automatically run that function on the output.
 
     Args:
         variable_name: string
+        func: function
 
     Returns:
         string
     """
 
-    return __SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name)
+    return func(__SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name))
 
 
 def env_driver(browser):
@@ -62,6 +214,7 @@ def env_driver(browser):
     Returns:
         selenium WebDriver
     """
+
     from selenium import webdriver
 
     the_driver = False
