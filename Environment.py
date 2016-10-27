@@ -187,7 +187,7 @@ class ConfigLoader:
 __SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigLoader(filepath=__SLACK_FRAMEWORK_ENV_PATH)
 
 
-def env(variable_name, func=lambda x: x if x else x):
+def env(variable_name, func=lambda x: x):
     """
     Get the corresponding environment variable.  Pass a function
     like `int` or `bool` as the `type_hint` keyword argument to
