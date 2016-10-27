@@ -112,18 +112,21 @@ class ConfigLoader:
 __SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigLoader(filepath=__SLACK_FRAMEWORK_ENV_PATH)
 
 
-def env(variable_name):
+def env(variable_name, func=lambda x: x if x else x):
     """
-    Get the corresponding environment variable.
+    Get the corresponding environment variable.  Pass a function
+    like `int` or `bool` as the `type_hint` keyword argument to
+    automatically run that function on the output.
 
     Args:
         variable_name: string
+        func: function
 
     Returns:
         string
     """
 
-    return __SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name)
+    return func(__SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name))
 
 
 def env_driver(browser):
@@ -136,6 +139,7 @@ def env_driver(browser):
     Returns:
         selenium WebDriver
     """
+    
     from selenium import webdriver
 
     the_driver = False
