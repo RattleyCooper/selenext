@@ -21,9 +21,12 @@ class ConfigLoader:
 
             for line in f:
                 self.sline = line.strip()
+
+                # Handle comments.
                 if line[0] == '#':
                     continue
 
+                # Handle dict mode.
                 if self.dict_mode:
                     if self.sline == self.dict_name + '{END}':
                         if self.dict_name not in self.lines.keys():
@@ -35,6 +38,7 @@ class ConfigLoader:
                     self.process_dict_line(line, self.dict_name)
                     continue
 
+                # Handle list mode.
                 if self.list_mode:
                     if self.sline == '{}[END]'.format(self.list_name):
                         if self.list_name not in self.lines.keys():
@@ -48,31 +52,66 @@ class ConfigLoader:
                         self.lines[self.list_name] = [self.sline]
                     continue
 
+                # Handle key=value lines.
                 if '=' in line:
                     self.process_key_value(line)
                     continue
 
+                # Handle list definitions.
                 if self.sline[-3:] == '[]:':
                     self.list_mode = True
                     self.list_name = self.sline[:-3]
                     continue
 
+                # Handle dict definitions.
                 if self.sline[-3:] == '{}:':
                     self.dict_mode = True
                     self.dict_name = self.sline[:-3]
                     continue
 
     def check_for_list_mode(self, line):
+        """
+        Check to see if the line is defining a list or not.  If it does, it will return
+        the lists name and the bool representing whether it is in list mode or not.
+
+        Args:
+            line:
+
+        Returns:
+            tuple
+        """
+
         self.list_name = self.sline[:-3]
         self.list_mode = True if self.sline[-3:] == '[]:' else False
         return self.list_name, self.list_mode
 
     def check_for_dict_mode(self, line):
+        """
+        Check to see if the line is defining a dictionary or not.  If it does, it will return
+        the dictionaries name and the bool representing whether it is in dict mode or not.
+
+        Args:
+            line:
+
+        Returns:
+            tuple
+        """
+
         self.dict_name = self.sline[:-3]
         self.dict_mode = True if self.sline[-3:] == '{}:' else False
         return self.dict_name, self.dict_mode
 
     def get_key_value(self, line):
+        """
+        Get the key and value from the given line, assuming it's separated by the first = sign.
+
+        Args:
+            line:
+
+        Returns:
+
+        """
+
         line_pieces = self.sline.split('=')
         key = line_pieces[0]
         # Safely grab the value.  If the value contains an = symbol, it should
@@ -82,6 +121,17 @@ class ConfigLoader:
         return key, value
 
     def process_dict_line(self, line, dict_name):
+        """
+        Process a line that occurs within a dict that is being defined in the .env file.
+
+        Args:
+            line:
+            dict_name:
+
+        Returns:
+            self
+        """
+
         key, value = self.get_key_value(line)
         try:
             self.lines[dict_name][key] = value
@@ -90,11 +140,32 @@ class ConfigLoader:
         return self
 
     def process_key_value(self, line):
+        """
+        Process a key=value from the given line.
+
+        Args:
+            line:
+
+        Returns:
+            self
+        """
+
         key, value = self.get_key_value(line)
         self.add_root_key(key, value)
         return self
 
     def add_root_key(self, key, value):
+        """
+        Add a key to self.lines with the given value.
+
+        Args:
+            key:
+            value:
+
+        Returns:
+            self
+        """
+
         self.lines[key] = value
         return self
 
