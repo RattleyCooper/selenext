@@ -26,6 +26,8 @@ class ConfigLoader:
 
                 if self.dict_mode:
                     if self.sline == self.dict_name + '{END}':
+                        if self.dict_name not in self.lines.keys():
+                            self.lines[self.dict_name] = {}
                         self.dict_mode = False
                         self.dict_name = None
                         continue
@@ -35,6 +37,8 @@ class ConfigLoader:
 
                 if self.list_mode:
                     if self.sline == '{}[END]'.format(self.list_name):
+                        if self.list_name not in self.lines.keys():
+                            self.lines[self.list_name] = []
                         self.list_name = None
                         self.list_mode = False
                         continue
