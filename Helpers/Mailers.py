@@ -7,7 +7,7 @@ class GMailer:
     """
     Send emails using Gmail.
     """
-    def __init__(self, username, password, host, port, gmail=True):
+    def __init__(self, username, password, host, port, gmail=True, anon=False):
         if type(username) != str and type(username) != unicode:
             raise TypeError('A string was expected for the username variable.')
         if type(password) != str and type(password) != unicode:
@@ -25,6 +25,7 @@ class GMailer:
         self.host = host
         self.port = port
         self.gmail = gmail
+        self.anon = anon
 
     def send_email(self, emails, subject, the_msg):
         """
@@ -51,7 +52,8 @@ class GMailer:
         if self.gmail:
             print(smtp.ehlo())
             print(smtp.starttls())
-        print(smtp.login(self.username, self.password))
+        if not self.anon:
+            print(smtp.login(self.username, self.password))
         print()
         print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
@@ -87,7 +89,8 @@ class GMailer:
         if self.gmail:
             print(smtp.ehlo())
             print(smtp.starttls())
-        print(smtp.login(self.username, self.password))
+        if not self.anon:
+            print(smtp.login(self.username, self.password))
         print()
         print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
