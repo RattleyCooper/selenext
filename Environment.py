@@ -9,8 +9,9 @@ __SLACK_FRAMEWORK_ENV_PATH = getcwd()\
 __SLACK_FRAMEWORK_ENV_PATH += '/.env' if __SLACK_FRAMEWORK_ENV_PATH[-1] != '/' else '.env'
 
 
-class ConfigLoader:
+class ConfigParser:
     def __init__(self, filepath='.env'):
+        self.filepath = filepath
         self.lines = {}
         self.list_mode = False
         self.list_name = None
@@ -182,9 +183,9 @@ class ConfigLoader:
         return self.lines[variable_name]
 
 # We use a global variable for the resource loader so that we are not constantly opening
-# the same file.  This will hold the config file in the ConfigLoader object so that
+# the same file.  This will hold the config file in the ConfigParser object so that
 # reloading is only done on imports.
-__SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigLoader(filepath=__SLACK_FRAMEWORK_ENV_PATH)
+__SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigParser(filepath=__SLACK_FRAMEWORK_ENV_PATH)
 
 
 def env(variable_name, func=lambda x: x):
