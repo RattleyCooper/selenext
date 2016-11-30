@@ -13,7 +13,7 @@
 #     \/__/         \/__/     \/__/         \/__/         \|__|     #
 #===================================================================#
 ```
-Slack is a micro-framework for web scraping using selenium in Python 2 or Python 3. Multi-threading is supported. This is currently still in development, however it's possible to write and run your automations within the framework as it is.
+Slack is a micro-framework for web automation/scraping using selenium in Python 2 or Python 3.  This is currently still in development, however it's possible to write and run your automations within the framework as it is.
 
 ## Install
 
