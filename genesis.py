@@ -268,7 +268,7 @@ def make_gitignore(directory):
     gitignore_path = directory + '.gitignore'
     if not isfile(gitignore_path):
         print('Creating .gitignore...')
-        write_stub(gitignore_path, '.env')
+        write_stub(gitignore_path, '.env', append_py=False)
         print('.gitignore created...')
     return None
 
