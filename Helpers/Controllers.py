@@ -44,6 +44,38 @@ def randomly_waits(function):
     return random_wait_decorator
 
 
+@randomly_waits
+def human_fill(element, text):
+    """
+    Send keys to an element and wait a random amount of time afterwards.
+
+    Args:
+        element:
+        text:
+
+    Returns:
+
+    """
+
+    return element.send_keys(text)
+
+
+@randomly_waits
+def human_click(element):
+    """
+    Click on an element and wait a random amount of time afterwards.
+
+    Args:
+        element:
+
+    Returns:
+
+    """
+
+    return element.click()
+
+
+
 def has_kwargs(function):
     """
     Decorator for passing **kwargs with your *args through the use of
