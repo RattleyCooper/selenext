@@ -47,6 +47,8 @@ To use the `WebReader`, you will need:
 * [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/)
 * [lxml](http://lxml.de/)
 
+If you need to spin some text, check out [spintax](https://github.com/AceLewis/spintax) for python!
+
 Once you have the dependencies, you can download this repository and 
 start using it, however you may want to read over the documentation 
 below.
