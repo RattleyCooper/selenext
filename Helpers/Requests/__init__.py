@@ -204,6 +204,7 @@ class WebReader(WebElement):
         self.current_response = None
         self.current_url = None
 
+        self.requests = requests
         self.web_history = WebHistory()
 
         self.size = 0, 0
@@ -248,12 +249,13 @@ class WebReader(WebElement):
         self.get(self.web_history.forward())
         return self
 
-    def get(self, url, add_to_history=True):
+    def get(self, url, headers=None, add_to_history=True):
         """
         Get a response for the given url.
 
         Args:
             url:
+            headers:
             add_to_history:
 
         Returns:
@@ -263,7 +265,11 @@ class WebReader(WebElement):
         if add_to_history:
             self.web_history.register(url)
         self.current_url = url
-        self.current_response = requests.get(url).text.strip()
+
+        if headers is None:
+            headers = {}
+
+        self.current_response = self.requests.get(url, headers=headers).text.strip()
 
         # Check for json response and if so, then return a dictionary
         # and set the current response to the dictionary.
