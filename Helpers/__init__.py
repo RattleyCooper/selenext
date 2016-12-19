@@ -7,11 +7,53 @@ class PageElement(object):
     def __init__(self, driver, element_dict):
         self.driver = driver
         self.element_dict = element_dict
+        
+        try:
+            bind_path = element_dict['bind']
+        except KeyError:
+            bind_path = False
+
+        # Handle any binds.
+        if bind_path:
+            new_func = self._get_bind(bind_path)
+            # Set the bind to the object we pulled in, instead of the string that locates the object.
+            element_dict['bind'] = new_func
+
+        try:
+            frame_location = element_dict['frame']
+        except KeyError:
+            frame_location = False
+
+        if frame_location:
+            frame_location = self._handle_frame(frame_location)
+            element_dict['frame'] = frame_location
+
         self._handle_element_dict(element_dict)
+
+    def __call__(self, *args, **kwargs):
+        if not isinstance(self, Frame):
+            self.driver.switch_to_default_content()
+
+        if hasattr(self, 'frame'):
+            frame = getattr(self, 'frame')
+            self.driver.switch_to.frame(frame())
+
+        lookup_method = self._get_lookup_method()
+
+        output = lookup_method(getattr(self, 'selector'))
+
+        # Bind the text if needed.
+        if hasattr(self, 'bind'):
+            binding = getattr(self, 'bind')
+            if type(output) == list:
+                output = [binding(t.text) for t in output]
+            else:
+                output = binding(output.text)
+        return output
 
     def exists(self):
         try:
-            ele = self._get_lookup_method()(getattr(self, 'lookup_target'))
+            ele = self._get_lookup_method()(getattr(self, 'selector'))
             if ele:
                 return True
             return False
@@ -28,17 +70,45 @@ class PageElement(object):
             setattr(self, k, v)
 
     def _get_lookup_method(self):
+        parent = self.driver
         # Handle finding multiple elements
         if hasattr(self, 'multiple'):
-            lookup_method = getattr(self.driver, 'find_elements_by_{}'.format(getattr(self, 'lookup_method')))
+            lookup_method = getattr(parent, 'find_elements_by_{}'.format(getattr(self, 'lookup_method')))
         else:
-            lookup_method = getattr(self.driver, 'find_element_by_{}'.format(getattr(self, 'lookup_method')))
+            lookup_method = getattr(parent, 'find_element_by_{}'.format(getattr(self, 'lookup_method')))
 
         return lookup_method
 
-    def __call__(self, *args, **kwargs):
-        lookup_method = self._get_lookup_method()
-        return lookup_method(getattr(self, 'lookup_target'))
+    def _get_bind(self, bind_path):
+        # Handle direct imports
+        if type(bind_path) == list:
+            imp, obj = bind_path
+            p = __import__(imp, fromlist=[''])
+            new_func = getattr(p, obj)
+        # Check if the bind_path exists in the builtins and use that if it does.
+        elif bind_path in __builtins__:
+            new_func = __builtins__[bind_path]
+        # Check to see if it's drilling into a module function or class.
+        elif '.' in bind_path:
+            steps = bind_path.split('.')
+            new_func = __import__(steps[0], fromlist=[''])
+            for step in steps[1:]:
+                new_func = getattr(new_func, step)
+        # If none of those things apply then try a regular import
+        else:
+            try:
+                new_func = __import__(bind_path, fromlist=[''])
+            except ImportError:
+                raise ImportError('Could not find the object to bind to: {}'.format(bind_path))
+
+        return new_func
+
+    def _handle_frame(self, frame_location):
+        return Frame(self.driver, frame_location)
+
+
+class Frame(PageElement):
+    pass
 
 
 class View(object):
@@ -59,8 +129,6 @@ class View(object):
         self.json_dict = json
         self._handle_view_dict(json)
 
-    def __getitem__(self, item):
-        return getattr(self, item)
 
     def get(self, item):
         return self.driver.get(item)
@@ -83,25 +151,6 @@ class View(object):
 
             setattr(self, k, v)
 
-    def _get_bind(self, bind_path):
-        # Check if the bind_path exists in the builtins and use that if it does.
-        if bind_path in __builtins__:
-            new_func = __builtins__[bind_path]
-        # Check to see if it's drilling into a module function or class.
-        elif '.' in bind_path:
-            steps = bind_path.split('.')
-            new_func = __import__(steps[0], fromlist=[''])
-            for step in steps[1:]:
-                new_func = getattr(new_func, step)
-        # If none of those things apply then try a regular import
-        else:
-            try:
-                new_func = __import__(bind_path, fromlist=[''])
-            except ImportError:
-                raise ImportError('Could not find the object to bind to: {}'.format(bind_path))
-
-        return new_func
-
     def _handle_elements(self, element_dict):
         try:
             element_dict_iterator = element_dict.iteritems()
@@ -111,17 +160,6 @@ class View(object):
         self.elements = {}
 
         for element_name, the_dict in element_dict_iterator:
-            try:
-                bind_path = the_dict['bind']
-            except KeyError:
-                bind_path = False
-
-            # Handle any binds.
-            if bind_path:
-                new_func = self._get_bind(bind_path)
-                # Set the bind to the object we pulled in, instead of the string that locates the object.
-                the_dict['bind'] = new_func
-
             # Set the element up in the dict.
             self.elements[element_name] = PageElement(self.driver, the_dict)
             setattr(self, element_name, self.elements[element_name])
