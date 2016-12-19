@@ -7,7 +7,8 @@ class PageElement(object):
     def __init__(self, driver, element_dict):
         self.driver = driver
         self.element_dict = element_dict
-        
+        self.parent = None
+
         try:
             bind_path = element_dict['bind']
         except KeyError:
@@ -28,7 +29,20 @@ class PageElement(object):
             frame_location = self._handle_frame(frame_location)
             element_dict['frame'] = frame_location
 
+        # Set up the parent element
+        try:
+            parent_location = element_dict['parent']
+        except KeyError:
+            parent_location = False
+
+        if parent_location:
+            parent_location = self._handle_parent(parent_location)
+            element_dict['parent'] = parent_location
+
         self._handle_element_dict(element_dict)
+
+    def _handle_parent(self, parent_location):
+        return ParentElement(self.driver, parent_location)
 
     def __call__(self, *args, **kwargs):
         if not isinstance(self, Frame):
@@ -41,6 +55,10 @@ class PageElement(object):
         lookup_method = self._get_lookup_method()
 
         output = lookup_method(getattr(self, 'selector'))
+        # Since parents are used to locate elements, we
+        # don't need to worry about any bindings.
+        if isinstance(self, ParentElement):
+            return output
 
         # Bind the text if needed.
         if hasattr(self, 'bind'):
@@ -53,7 +71,8 @@ class PageElement(object):
 
     def exists(self):
         try:
-            ele = self._get_lookup_method()(getattr(self, 'selector'))
+            lookup_method = self._get_lookup_method()
+            ele = lookup_method(getattr(self, 'selector'))
             if ele:
                 return True
             return False
@@ -70,7 +89,10 @@ class PageElement(object):
             setattr(self, k, v)
 
     def _get_lookup_method(self):
-        parent = self.driver
+        if self.parent is not None:
+            parent = getattr(self, 'parent')()
+        else:
+            parent = self.driver
         # Handle finding multiple elements
         if hasattr(self, 'multiple'):
             lookup_method = getattr(parent, 'find_elements_by_{}'.format(getattr(self, 'lookup_method')))
@@ -107,6 +129,10 @@ class PageElement(object):
         return Frame(self.driver, frame_location)
 
 
+class ParentElement(PageElement):
+    pass
+
+
 class Frame(PageElement):
     pass
 
@@ -128,7 +154,6 @@ class View(object):
 
         self.json_dict = json
         self._handle_view_dict(json)
-
 
     def get(self, item):
         return self.driver.get(item)
