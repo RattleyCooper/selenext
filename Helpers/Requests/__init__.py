@@ -2,6 +2,7 @@ from uuid import uuid4
 import requests
 from bs4 import BeautifulSoup
 from lxml import etree
+from json import loads
 from .Exceptions import NoSuchElementException
 
 
@@ -274,7 +275,9 @@ class WebReader(WebElement):
         # Check for json response and if so, then return a dictionary
         # and set the current response to the dictionary.
         if self.current_response[0] == '{':
-            self.current_response = self.current_response.json()
+            if hasattr(self.current_response, 'json'):
+                self.current_response = self.current_response.json()
+            self.current_response = loads(self.current_response)
             self.soup = None
             return self.current_response
 
