@@ -1,4 +1,167 @@
 from __future__ import print_function
+from json import loads
+from selenium.common.exceptions import NoSuchElementException
+
+
+class PageElement(object):
+    def __init__(self, driver, element_dict):
+        self.driver = driver
+        self.element_dict = element_dict
+        self._handle_element_dict(element_dict)
+
+    def exists(self):
+        try:
+            ele = self._get_lookup_method()(getattr(self, 'lookup_target'))
+            if ele:
+                return True
+            return False
+        except NoSuchElementException:
+            return False
+
+    def _handle_element_dict(self, element_dict):
+        try:
+            iterable = element_dict.iteritems()
+        except AttributeError:
+            iterable = element_dict.items()
+
+        for k, v in iterable:
+            setattr(self, k, v)
+
+    def _get_lookup_method(self):
+        # Handle finding multiple elements
+        if hasattr(self, 'multiple'):
+            lookup_method = getattr(self.driver, 'find_elements_by_{}'.format(getattr(self, 'lookup_method')))
+        else:
+            lookup_method = getattr(self.driver, 'find_element_by_{}'.format(getattr(self, 'lookup_method')))
+
+        return lookup_method
+
+    def __call__(self, *args, **kwargs):
+        lookup_method = self._get_lookup_method()
+        return lookup_method(getattr(self, 'lookup_target'))
+
+
+class View(object):
+    """
+    The View object is a container for view/page's JSON definition.  It sets up
+    everything so that the page object can access what it needs.
+    """
+    def __init__(self, driver, json, file=False):
+        self.driver = driver
+
+        if file:
+            with open(json, 'r') as f:
+                json = f.read().strip()
+
+        if type(json) == str:
+            json = loads(json)
+
+        self.json_dict = json
+        self._handle_view_dict(json)
+
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+    def get(self, item):
+        return self.driver.get(item)
+
+    def __getattribute__(self, item):
+        thing = object.__getattribute__(self, item)
+        # if isinstance(thing, PageElement):
+        #     return thing()
+        return thing
+
+    def _handle_view_dict(self, json_dict):
+        try:
+            iterable = json_dict.iteritems()
+        except AttributeError:
+            iterable = json_dict.items()
+
+        for k, v in iterable:
+            if k == 'elements':
+                self._handle_elements(v)
+
+            setattr(self, k, v)
+
+    def _get_bind(self, bind_path):
+        # Check if the bind_path exists in the builtins and use that if it does.
+        if bind_path in __builtins__:
+            new_func = __builtins__[bind_path]
+        # Check to see if it's drilling into a module function or class.
+        elif '.' in bind_path:
+            steps = bind_path.split('.')
+            new_func = __import__(steps[0], fromlist=[''])
+            for step in steps[1:]:
+                new_func = getattr(new_func, step)
+        # If none of those things apply then try a regular import
+        else:
+            try:
+                new_func = __import__(bind_path, fromlist=[''])
+            except ImportError:
+                raise ImportError('Could not find the object to bind to: {}'.format(bind_path))
+
+        return new_func
+
+    def _handle_elements(self, element_dict):
+        try:
+            element_dict_iterator = element_dict.iteritems()
+        except AttributeError:
+            element_dict_iterator = element_dict.items()
+
+        self.elements = {}
+
+        for element_name, the_dict in element_dict_iterator:
+            try:
+                bind_path = the_dict['bind']
+            except KeyError:
+                bind_path = False
+
+            # Handle any binds.
+            if bind_path:
+                new_func = self._get_bind(bind_path)
+                # Set the bind to the object we pulled in, instead of the string that locates the object.
+                the_dict['bind'] = new_func
+
+            # Set the element up in the dict.
+            self.elements[element_name] = PageElement(self.driver, the_dict)
+            setattr(self, element_name, self.elements[element_name])
+
+        return self
+
+
+class Page(object):
+    """
+    The Page object is a light wrapper around the View object.  They are almost the same
+    but the Page object makes accessing elements on the page a bit simpler.
+    """
+    def __init__(self, driver, json, file=False):
+        self.driver = driver
+        self.view = View(driver, json, file=file)
+
+    def __bool__(self):
+        try:
+            iterable = self.view.elements.iteritems()
+        except AttributeError:
+            iterable = self.view.elements.items()
+
+        for k, v in iterable:
+            test_element = getattr(self.view, k)
+            if not test_element.exists():
+                return False
+
+        return True
+
+    def __getattr__(self, item):
+        # Check if the page_view has the item.
+        if hasattr(self.view, item):
+            # Handle PageElements by calling the instance and getting the
+            # actual selenium web element.
+            if isinstance(getattr(self.view, item), PageElement):
+                return getattr(self.view, item)()
+            # Handle any other items.
+            return getattr(self.view, item)
+
+        raise AttributeError()
 
 
 class MetaObject(object):
