@@ -39,7 +39,7 @@ def randomly_waits(function):
         # Execute function and grab result
         function_result = function(*args, **kwargs)
         # Sleep
-        sleep(uniform(0.01, 3.01))
+        sleep(uniform(0.99, 3.01))
         return function_result
     return random_wait_decorator
 
