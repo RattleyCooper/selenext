@@ -1,12 +1,12 @@
 from os import getcwd
 
 
-__SLACK_FRAMEWORK_ENV_PATH = getcwd()\
+__SELENEXT_FRAMEWORK_ENV_PATH = getcwd()\
                                  .replace('\\', '/')\
                                  .replace('SiteAutomations', '')\
                                  .replace('Jobs', '')
 
-__SLACK_FRAMEWORK_ENV_PATH += '/.env' if __SLACK_FRAMEWORK_ENV_PATH[-1] != '/' else '.env'
+__SELENEXT_FRAMEWORK_ENV_PATH += '/.env' if __SELENEXT_FRAMEWORK_ENV_PATH[-1] != '/' else '.env'
 
 
 class ConfigParser:
@@ -185,7 +185,7 @@ class ConfigParser:
 # We use a global variable for the resource loader so that we are not constantly opening
 # the same file.  This will hold the config file in the ConfigParser object so that
 # reloading is only done on imports.
-__SLACK_FRAMEWORK_RESOURCE_LOADER = ConfigParser(filepath=__SLACK_FRAMEWORK_ENV_PATH)
+__SELENEXT_FRAMEWORK_RESOURCE_LOADER = ConfigParser(filepath=__SELENEXT_FRAMEWORK_ENV_PATH)
 
 
 def env(variable_name, func=lambda x: x):
@@ -202,7 +202,7 @@ def env(variable_name, func=lambda x: x):
         string
     """
 
-    return func(__SLACK_FRAMEWORK_RESOURCE_LOADER.get(variable_name))
+    return func(__SELENEXT_FRAMEWORK_RESOURCE_LOADER.get(variable_name))
 
 
 def env_driver(browser):

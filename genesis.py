@@ -1,5 +1,5 @@
 """
-genesis.py is used for creating new Slack projects and writing program stubs.
+genesis.py is used for creating new selenext projects and writing program stubs.
 """
 
 from __future__ import print_function
