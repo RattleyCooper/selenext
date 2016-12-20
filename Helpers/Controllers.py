@@ -75,7 +75,6 @@ def human_click(element):
     return element.click()
 
 
-
 def has_kwargs(function):
     """
     Decorator for passing **kwargs with your *args through the use of
