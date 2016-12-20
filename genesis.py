@@ -176,13 +176,13 @@ DB_USERNAME=None
 DB_PASSWORD=None
 """
 
-    migrations_stub = """from Slack.Database import migrate
+    migrations_stub = """from selenext.Database import migrate
 import models
 
 migrate(models)
 """
     models_stub = """from peewee import *
-from Slack.Environment import get_database, env
+from selenext.Environment import get_database, env
 
 
 db = get_database(env("DB_TYPE"))
@@ -275,7 +275,7 @@ def make_gitignore(directory):
 
 def make_project(directory):
     """
-    Create a new Slack project in the given directory.
+    Create a new selenext project in the given directory.
 
     Args:
         directory: string
