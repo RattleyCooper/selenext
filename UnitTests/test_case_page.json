@@ -29,6 +29,10 @@
           "lookup_method": "tag_name"
         }
       }
+    },
+    "missing_element": {
+      "selector": "no_element_yo",
+      "lookup_method": "id"
     }
   }
 }
