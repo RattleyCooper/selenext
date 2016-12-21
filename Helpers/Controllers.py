@@ -122,9 +122,8 @@ class PageController(object):
     """
     Standard controller for controlling a page.
     """
-    def __init__(self, page, wait=False):
+    def __init__(self, page):
         self.page = page
-        self.wait = wait
 
     @randomly_waits
     def fill(self, element, text):
@@ -163,8 +162,8 @@ class LoginPageController(PageController):
     A generic controller for logging in to a webpage.  It uses a `Page` object and a
     `WebDriverWait` object to do the job.
     """
-    def __init__(self, page, wait):
-        super(LoginPageController, self).__init__(page, wait=wait)
+    def __init__(self, page):
+        super(LoginPageController, self).__init__(page)
 
     @randomly_waits
     def do_login(self, username, password, remember_me=False, stay_logged_in=False, wait_func=False):
