@@ -1,7 +1,9 @@
 import unittest
-from Config.Environment import env, env_driver, get_database
-from selenium import webdriver
+
 from peewee import SqliteDatabase
+from selenium import webdriver
+
+from Environment import env, env_driver, get_database
 
 
 class ConfigLoaderEnvironmentTest(unittest.TestCase):
@@ -17,7 +19,7 @@ class ConfigLoaderEnvironmentTest(unittest.TestCase):
     def test_env_driver_with_defined_browser(self):
         self.assertEqual(env_driver(env('BROWSER')), webdriver.Chrome)
 
-    def test_env_driver_undefined_browser(self):
+    def test_env_driver_with_undefined_browser(self):
         self.assertEqual(env_driver(env('DB')), False)
 
     def test_get_database_with_defined_database_type(self):

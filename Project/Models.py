@@ -7,8 +7,8 @@ but as of now, they must be in Models.py.
 """
 
 import datetime
-from Config.Environment import env, get_database
 from peewee import *
+from ..Environment import env, get_database
 
 db = get_database(env("DB_TYPE"))
 

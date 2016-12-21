@@ -1,11 +1,12 @@
 """
 This is an example of what the a `SiteAutomation` might look like
-using Slack.  This controller is pretty bare-bones.
+using selenext.  This controller is pretty bare-bones.
 """
 
+from __future__ import print_function
 from time import sleep
 from random import randint
-from Helpers.Controllers import IndependentController, has_kwargs
+from ...Helpers.Controllers import IndependentController, has_kwargs
 
 
 def _do_search(driver, wait, search_term):
@@ -66,5 +67,5 @@ class ThreadedGoogleSearch(IndependentController):
     # CommandManager, just include an instance of the Kwargs object.
     @has_kwargs
     def do_search(self, search_term, some_kwarg='some value'):
-        print some_kwarg
+        print(some_kwarg)
         return _do_search(self.driver, self.wait, search_term)

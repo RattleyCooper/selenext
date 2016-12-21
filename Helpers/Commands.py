@@ -1,6 +1,7 @@
-from Config.Environment import env, env_driver
-from Helpers import DummyLogger, DummyThread
 import threading
+
+from ..Environment import env, env_driver
+from ..Helpers import DummyLogger, DummyThread
 
 
 class Kwargs(object):
@@ -18,6 +19,7 @@ class Kwargs(object):
     some_controller_func(*a)
 
     """
+
     def __init__(self, dictionary):
         try:
             dictionary.keys()
@@ -36,14 +38,19 @@ class Kwargs(object):
 
     def __delitem__(self, key):
         del self.dictionary[key]
-        return self
 
     def __iter__(self):
-        return self.dictionary.iteritems()
+        try:
+            for k, v in self.dictionary.iteritems():
+                yield k, v
+        except AttributeError:
+            for k, v in self.dictionary.items():
+                yield k, v
 
 
 class BaseCommandFactory(object):
-    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, dummy_logger_prints=False, log_file='main_log.txt'):
+    def __init__(self, controllers, logging=False, attach_drivers=True, wait_timeout=30, dummy_logger_prints=False,
+                 log_file='main_log.txt'):
         if type(controllers) != dict:
             raise TypeError('controllers must be a dictionary of controllers.')
         self.attach_drivers = attach_drivers
@@ -69,7 +76,7 @@ class BaseCommandFactory(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
+            self.logger = DummyLogger(prints=dummy_logger_prints, level='DEBUG')
 
         self.controllers = controllers
         self.wait_timeout = wait_timeout
@@ -79,6 +86,27 @@ class BaseCommandFactory(object):
             self._attach_drivers()
             self.logger.info('Drivers attached.')
 
+    def __len__(self):
+        return len(self.controllers)
+
+    def __setitem__(self, key, value):
+        self.controllers[key] = value
+
+    def __getitem__(self, item):
+        return self.controllers[item]
+
+    def __delitem__(self, key):
+        self._shutdown_driver(key)
+        del self.controllers[key]
+
+    def __iter__(self):
+        try:
+            for k, v in self.controllers.iteritems():
+                yield k, v
+        except AttributeError:
+            for k, v in self.controllers.items():
+                yield k, v
+
     def _attach_drivers(self):
         """
         Attach separate drivers to each controller.
@@ -86,23 +114,43 @@ class BaseCommandFactory(object):
         :return:
         """
 
-        for key, args in self.controllers.iteritems():
+        try:
+            items = self.controllers.iteritems()
+        except AttributeError:
+            items = self.controllers.items()
+
+        for key, args in items:
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
 
+    def _shutdown_driver(self, key, retry=True):
+        try:
+            self.controllers[key].driver.close()
+        except:
+            pass
+        try:
+            self.controllers[key].driver.quit()
+        except:
+            pass
+        if retry:
+            self._shutdown_driver(key, retry=False)
+        return self
+
     def shutdown(self):
         """
-        Shut down teh WebDriver instances.
+        Shut down the WebDriver instances.
 
-        :return:
+        :return: None
         """
 
-        for key, controller in self.controllers.iteritems():
-            controller.driver.close()
-            try:
-                controller.driver.quit()
-            except Exception:
-                pass
+        try:
+            items = self.controllers.iteritems()
+        except AttributeError:
+            items = self.controllers.items()
+
+        for key, controller in items:
+            self._shutdown_driver(key)
+        return None
 
 
 class ThreadedCommandFactory(BaseCommandFactory):
@@ -139,16 +187,22 @@ class ThreadedCommandFactory(BaseCommandFactory):
         cmd = m.create_command(do_login, do_login_command)
         cmd.start()
 
-        :param target:
-        :param command_pack:
-        :return:
+        :param target: function
+        :param command_pack: dict
+        :return: Command
         """
 
         if type(command_pack) != dict:
             raise TypeError('Expected a dictionary for the command_pack variable.')
 
         self.logger.info('Creating threads.')
-        for key, args in command_pack.iteritems():
+
+        try:
+            items = command_pack.iteritems()
+        except AttributeError:
+            items = command_pack.items()
+
+        for key, args in items:
             args = (self.controllers[key],) + args
             thread = threading.Thread(target=target, args=args)
             self.pool.append(thread)
@@ -163,18 +217,24 @@ class CommandFactory(BaseCommandFactory):
     def create_command(self, target, command_pack, dummy_logger_prints=False):
         """
         Create a command that will execute jobs one by one.
-        
-        :param target:
-        :param command_pack:
-        :param dummy_logger_prints:
-        :return:
+
+        :param target: function
+        :param command_pack: dict
+        :param dummy_logger_prints: bool
+        :return: Command
         """
 
         if type(command_pack) != dict:
             raise TypeError('Expected a dictionary for the command_pack variable.')
 
         self.logger.info('Creating command.')
-        for key, args in command_pack.iteritems():
+
+        try:
+            items = command_pack.iteritems()
+        except AttributeError:
+            items = command_pack.items()
+
+        for key, args in items:
             args = (self.controllers[key],) + args
             thread = DummyThread(target=target, args=args)
             self.pool.append(thread)
@@ -207,7 +267,7 @@ class Command(object):
             logger.addHandler(handler)
             self.logger = logger
         else:
-            self.logger = DummyLogger(prints=dummy_logger_prints, level=env('DUMMY_LOGGER_LEVEL'))
+            self.logger = DummyLogger(prints=dummy_logger_prints, level='DEBUG')
 
         self.pool = pool
 
@@ -215,9 +275,9 @@ class Command(object):
         """
         Start the threads in the thread pool.
 
-        :param dump_pool:
-        :param join_threads:
-        :return:
+        :param dump_pool: bool
+        :param join_threads: bool
+        :return: self
         """
 
         self.logger.info('Starting command.')
@@ -236,7 +296,7 @@ class Command(object):
         """
         Remove the threads from the thread pool.
 
-        :return:
+        :return: self
         """
 
         self.pool = []

@@ -1,18 +1,9 @@
-"""
-Slack is a micro-framework for scraping the web using selenium.
-Written by Wykleph in April of 2016.
-
-Create models in the `Models.py` file.
-
-Once you have defined your models, they are accessed using the
-`Models.ModelName` syntax.
-"""
-
+from __future__ import print_function
 from time import sleep
 # Database models used to interact with databases.
 from Project import Models
 # The environment variable loader.  These variables can be set in the .env file.
-from Config.Environment import env, env_driver
+from Environment import env, env_driver
 # Controllers are kept in the SiteAutomations folder.
 from SiteAutomations.Examples import GoogleExample, BingExample
 from Helpers.Contexts import quitting
@@ -20,7 +11,10 @@ from Helpers.Contexts import quitting
 from Helpers.Commands import CommandFactory, Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
 
-# This is where selenium starts up.
+# This is where the WebDriver is instantiated. Instead
+# of instantiating it directly, use the `env` and
+# `env_driver` functions to grab it based on the
+# `.env` configuration file.
 # This could be written as:
 #
 #   browser = env("BROWSER")
@@ -29,10 +23,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 #       pass
 #
 with quitting(env_driver(env("BROWSER"))()) as driver:
-    # Write your selenium code here.
-
-    # Here is an example of a `SiteAutomation` taken from the
-    # `GoogleExample.py` file.
     wait = WebDriverWait(driver, 30)
 
     # Pass the web driver to the site automation along with anything
@@ -41,6 +31,8 @@ with quitting(env_driver(env("BROWSER"))()) as driver:
     # Models.
     google_search = GoogleExample.GoogleSearch(driver, wait, Models)
     bing_search = BingExample.BingSearch(driver, wait, Models)
+
+    # Do stuff with your controllers.
     google_search.do_search('google wiki')
     sleep(5)
     bing_search.do_search('bing wiki')
@@ -61,6 +53,19 @@ controllers = {
 # so that the each controller has it's own WebDriver instance
 # and each request is made in the main thread.
 cmd_factory = CommandFactory(controllers, logging=False)
+# In addition to creating Command objects, instances of any CommandFactory object will
+# act similar to how a dictionary works.  The only difference is you don't need to call
+# iteritems() when iterating over it:
+#
+#       for key, controller in cmd_factory:
+#           print key, controller
+#
+#       b = cmd_factory['bing']
+#       b.do_search('hello world')
+#
+#       del cmd_factory['bing']
+#       del cmd_factory['google']
+
 
 # Register arguments to pass to each controller.  They are
 # matched by the key in the controllers dictionary.
@@ -83,7 +88,7 @@ cmd = cmd_factory.create_command(lambda controller, *search_term: controller.do_
 # Start the command.  Each search will be executed one after the
 # other.
 cmd.start()
-print 'finished first search'
+print('finished first search')
 sleep(5)
 
 # Close the WebDrivers down.

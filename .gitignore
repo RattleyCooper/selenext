@@ -3,6 +3,7 @@
 
 *.log
 test.py
+*_ignore.md
 
 # Databases
 *.db

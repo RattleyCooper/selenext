@@ -1,7 +1,4 @@
-from sys import path
-from os import getcwd
-
-# PATH hack.
-cwd = getcwd()
-if cwd not in path:
-    path.append(cwd)
+try:
+    from genesis import make_project, make_project_scaffold
+except ImportError:
+    from selenext.genesis import make_project, make_project_scaffold

@@ -1,13 +1,13 @@
 """
 This file is used to migrate database tables to the database.
 """
-import Models
 
 
-def migrate():
+def migrate(models):
     """
     Run database migrations for the defined models.
-    :return:
+
+    :return: None
     """
     models_pieces = [
         'BareField', 'BigIntegerField', 'BinaryField', 'BlobField',
@@ -20,21 +20,22 @@ def migrate():
         'JOIN_INNER', 'JOIN_LEFT_OUTER', 'Model', 'MySQLDatabase',
         'NotSupportedError', 'OperationalError', 'Param',
         'PostgresqlDatabase', 'PrimaryKeyField', 'ProgrammingError',
-        'Proxy', 'R', 'SQL', 'SqliteDatabase', 'TextField', 'TimeField',
-        'UUIDField', 'Using', 'Window', '__builtins__', '__doc__',
-        '__file__', '__name__', '__package__', 'datetime', 'db', 'fn',
-        'prefetch'
+        'Proxy', 'R', 'SmallIntegerField', 'SQL', 'SqliteDatabase', 'TextField',
+        'TimeField',
+        'TimestampField', 'UUIDField', 'Using', 'Window', '__builtins__',
+        '__doc__', '__file__', '__name__', '__package__', 'datetime', 'db',
+        'fn', 'prefetch'
     ]
 
-    migrations = list(set(dir(Models)) - set(models_pieces))
+    migrations = list(set(dir(models)) - set(models_pieces))
     migrations.remove('BaseModel')
 
     # Grab the actual class object for the model.
-    migrations = [getattr(Models, klass) for klass in migrations]
+    migrations = [getattr(models, klass) for klass in migrations]
     # Make sure we didn't pick up stragglers.
     migrations = [c for c in migrations if 'class' in str(c)]
 
-    db = Models.db
+    db = models.db
     db.connect()
     try:
         db.drop_tables(migrations)
@@ -42,6 +43,9 @@ def migrate():
         pass
     db.create_tables(migrations)
     db.close()
+    return
 
 if __name__ == '__main__':
-    migrate()
+    pass
+    # from Project import Models
+    # migrate()

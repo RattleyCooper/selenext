@@ -1,3 +1,4 @@
+from __future__ import print_function
 import smtplib
 from email.mime.text import MIMEText
 
@@ -6,7 +7,7 @@ class GMailer:
     """
     Send emails using Gmail.
     """
-    def __init__(self, username, password, host, port):
+    def __init__(self, username, password, host, port, tls=True, ehlo=True, anon=False):
         if type(username) != str and type(username) != unicode:
             raise TypeError('A string was expected for the username variable.')
         if type(password) != str and type(password) != unicode:
@@ -14,12 +15,18 @@ class GMailer:
         if type(host) != str and type(host) != unicode:
             raise TypeError('A string was expected for the host variable.')
         if type(port) != int:
-            raise TypeError('A integer was expected for the port variable.')
+            try:
+                port = int(port)
+            except ValueError:
+                raise TypeError('An integer was expected for the port variable.')
 
         self.username = username
         self.password = password
         self.host = host
         self.port = port
+        self.tls = tls
+        self.ehlo = ehlo
+        self.anon = anon
 
     def send_email(self, emails, subject, the_msg):
         """
@@ -42,12 +49,16 @@ class GMailer:
 
         msg += "\r\n{}".format(the_msg)
         smtp = smtplib.SMTP("{}:{}".format(self.host, self.port))
-        print "Sending report..."
-        print smtp.ehlo()
-        print smtp.starttls()
-        print smtp.login(self.username, self.password)
-        print
-        print smtp.sendmail(self.username, email_list, msg)
+        print("Sending report...")
+
+        if self.ehlo:
+            print(smtp.ehlo())
+        if self.tls:
+            print(smtp.starttls())
+        if not self.anon:
+            print(smtp.login(self.username, self.password))
+        print()
+        print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
         return self
 
@@ -78,10 +89,14 @@ class GMailer:
         msg += "\r\n" + attachment.as_string()
 
         smtp = smtplib.SMTP("{}:{}".format(self.host, self.port))
-        print smtp.ehlo()
-        print smtp.starttls()
-        print smtp.login(self.username, self.password)
-        print
-        print smtp.sendmail(self.username, email_list, msg)
+
+        if self.ehlo:
+            print(smtp.ehlo())
+        if self.tls:
+            print(smtp.starttls())
+        if not self.anon:
+            print(smtp.login(self.username, self.password))
+        print()
+        print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
         return self
