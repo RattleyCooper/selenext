@@ -15,7 +15,7 @@ class PageTest(unittest.TestCase):
         self.driver = Chrome()
         self.assertIsInstance(self.driver, WebDriver)
 
-        self.page = Page(self.driver, 'test_case_page.json', file=True)
+        self.page = Page(self.driver, 'page_tests.json', file=True)
 
     def test_page_instance_is_page(self):
         self.assertIsInstance(self.page, Page)
@@ -24,7 +24,7 @@ class PageTest(unittest.TestCase):
         self.assertRaises(TypeError, Page)
         self.assertRaises(TypeError, Page, self.driver)
         self.assertRaises(JSONDecodeError, Page, self.driver, '')
-        self.assertRaises(JSONDecodeError, Page, self.driver, 'test_case_page.json')
+        self.assertRaises(JSONDecodeError, Page, self.driver, 'page_tests.json')
 
     def test_page_attributes(self):
         self.assertIsInstance(self.page.driver, WebDriver)
