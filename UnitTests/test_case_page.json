@@ -1,0 +1,34 @@
+{
+  "root": "https://google.com",
+  "elements": {
+    "search_input": {
+      "selector": "q",
+      "lookup_method": "name"
+    },
+    "search_button": {
+      "selector": "btnG",
+      "lookup_method": "name"
+    },
+    "google_search_button": {
+      "selector": "btnK",
+      "lookup_method": "name"
+    },
+    "results": {
+      "multiple": true,
+      "selector": "//h3[@class='r']",
+      "lookup_method": "xpath"
+    },
+    "search_form": {
+      "selector": "searchform",
+      "lookup_method": "id",
+      "parent": {
+        "selector": "viewport",
+        "lookup_method": "id",
+        "parent": {
+          "selector": "body",
+          "lookup_method": "tag_name"
+        }
+      }
+    }
+  }
+}
