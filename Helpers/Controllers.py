@@ -118,6 +118,125 @@ def has_kwargs(function):
     return kwargsable
 
 
+class PageController(object):
+    """
+    Standard controller for controlling a page.
+    """
+    def __init__(self, page, wait=False):
+        self.page = page
+        self.wait = wait
+
+    @randomly_waits
+    def fill(self, element, text):
+        """
+        Send keys to an element, then randomly wait.
+
+        Args:
+            element:
+            text:
+
+        Returns:
+            self
+        """
+
+        element.send_keys(text)
+        return self
+
+    @randomly_waits
+    def click(self, element):
+        """
+        Click on an element, then randomly wait.
+
+        Args:
+            element:
+
+        Returns:
+            self
+        """
+
+        element.click()
+        return self
+
+
+class LoginPageController(PageController):
+    """
+    A generic controller for logging in to a webpage.  It uses a `Page` object and a
+    `WebDriverWait` object to do the job.
+    """
+    def __init__(self, page, wait):
+        super(LoginPageController, self).__init__(page, wait=wait)
+
+    @randomly_waits
+    def do_login(self, username, password, remember_me=False, stay_logged_in=False, wait_func=False):
+        """
+        Log in to a web page using the given `Page` object as a template.  The `username` and `password`
+        attributes must be set on the `Page` object.  If you want to use the `remember_me` keyword arg,
+        you must also have that attribute set on the `Page` object.
+
+        Args:
+            username: str
+            password: str
+            remember_me: bool
+            stay_logged_in: bool
+            wait_func: func, bool
+
+        Returns:
+            self
+        """
+        self.fill(self.page.username, username)
+        self.fill(self.page.password, password)
+
+        # Click remember me checkbox
+        if remember_me:
+            self.click(self.page.remember_me)
+
+        # Stay logged in checkbox
+        if stay_logged_in:
+            self.click(self.page.stay_logged_in)
+
+        # Click login button
+        self.page.login_button.click()
+
+        # Call the wait function.
+        if wait_func:
+            self.wait.until(wait_func)
+
+        return self
+    
+
+class SearchPageController(PageController):
+    """
+    A generic controller for a simple search page.  Just pass in your `Page` object
+    with a `search_input` and a `search_button` defined, along with a `WebDriverWait`
+    object.  You can call the `perform_search` method and it will fill in the input
+    using the `Page` object passed in, then click the search button using the `Page`
+    object.  You can also pass in the `wait_func` keyword to set a wait function that
+    should be called before returning control.
+    """
+    def __init__(self, page, wait):
+        super(SearchPageController, self).__init__(page, wait=wait)
+
+    def perform_search(self, term, wait_func=False):
+        """
+        Search for the given term using the page object and the wait object if it is
+        set.
+
+        Args:
+            term:
+            wait_func:
+
+        Returns:
+            self
+        """
+        self.fill(self.page.search_input, term)
+        self.page.search_button.click()
+
+        if wait_func:
+            self.wait.until(wait_func)
+
+        return self
+
+
 class IndependentController(object):
     """
     The base class for a threaded controller setup.
