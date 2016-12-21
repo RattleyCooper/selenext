@@ -40,7 +40,12 @@ class Kwargs(object):
         del self.dictionary[key]
 
     def __iter__(self):
-        return self.dictionary.iteritems()
+        try:
+            for k, v in self.dictionary.iteritems():
+                yield k, v
+        except AttributeError:
+            for k, v in self.dictionary.items():
+                yield k, v
 
 
 class BaseCommandFactory(object):
@@ -95,7 +100,12 @@ class BaseCommandFactory(object):
         del self.controllers[key]
 
     def __iter__(self):
-        return self.controllers.iteritems()
+        try:
+            for k, v in self.controllers.iteritems():
+                yield k, v
+        except AttributeError:
+            for k, v in self.controllers.items():
+                yield k, v
 
     def _attach_drivers(self):
         """
@@ -103,7 +113,13 @@ class BaseCommandFactory(object):
 
         :return:
         """
-        for key, args in self.controllers.iteritems():
+
+        try:
+            items = self.controllers.iteritems()
+        except AttributeError:
+            items = self.controllers.items()
+
+        for key, args in items:
             if 'attach_driver' in dir(args):
                 args.attach_driver(env_driver(env('BROWSER'))(), timeout=self.wait_timeout)
 
@@ -122,13 +138,19 @@ class BaseCommandFactory(object):
 
     def shutdown(self):
         """
-        Shut down teh WebDriver instances.
+        Shut down the WebDriver instances.
 
-        :return:
+        :return: None
         """
 
-        for key, controller in self.controllers.iteritems():
+        try:
+            items = self.controllers.iteritems()
+        except AttributeError:
+            items = self.controllers.items()
+
+        for key, controller in items:
             self._shutdown_driver(key)
+        return None
 
 
 class ThreadedCommandFactory(BaseCommandFactory):
@@ -165,16 +187,22 @@ class ThreadedCommandFactory(BaseCommandFactory):
         cmd = m.create_command(do_login, do_login_command)
         cmd.start()
 
-        :param target:
-        :param command_pack:
-        :return:
+        :param target: function
+        :param command_pack: dict
+        :return: Command
         """
 
         if type(command_pack) != dict:
             raise TypeError('Expected a dictionary for the command_pack variable.')
 
         self.logger.info('Creating threads.')
-        for key, args in command_pack.iteritems():
+
+        try:
+            items = command_pack.iteritems()
+        except AttributeError:
+            items = command_pack.items()
+
+        for key, args in items:
             args = (self.controllers[key],) + args
             thread = threading.Thread(target=target, args=args)
             self.pool.append(thread)
@@ -190,17 +218,23 @@ class CommandFactory(BaseCommandFactory):
         """
         Create a command that will execute jobs one by one.
 
-        :param target:
-        :param command_pack:
-        :param dummy_logger_prints:
-        :return:
+        :param target: function
+        :param command_pack: dict
+        :param dummy_logger_prints: bool
+        :return: Command
         """
 
         if type(command_pack) != dict:
             raise TypeError('Expected a dictionary for the command_pack variable.')
 
         self.logger.info('Creating command.')
-        for key, args in command_pack.iteritems():
+
+        try:
+            items = command_pack.iteritems()
+        except AttributeError:
+            items = command_pack.items()
+
+        for key, args in items:
             args = (self.controllers[key],) + args
             thread = DummyThread(target=target, args=args)
             self.pool.append(thread)
@@ -241,9 +275,9 @@ class Command(object):
         """
         Start the threads in the thread pool.
 
-        :param dump_pool:
-        :param join_threads:
-        :return:
+        :param dump_pool: bool
+        :param join_threads: bool
+        :return: self
         """
 
         self.logger.info('Starting command.')
@@ -262,7 +296,7 @@ class Command(object):
         """
         Remove the threads from the thread pool.
 
-        :return:
+        :return: self
         """
 
         self.pool = []

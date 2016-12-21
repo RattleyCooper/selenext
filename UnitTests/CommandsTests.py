@@ -80,7 +80,12 @@ class ThreadedCommandFactoryTest(unittest.TestCase):
         self.assertIsInstance(self.cmd.create_command(_, command_pack), Command)
 
     def tearDown(self):
-        for k, controller in self.cmd.controllers.iteritems():
+        try:
+            items = self.cmd.controllers.iteritems()
+        except AttributeError:
+            items = self.cmd.controllers.items()
+
+        for k, controller in items:
             controller.driver.close()
             try:
                 controller.driver.quit()

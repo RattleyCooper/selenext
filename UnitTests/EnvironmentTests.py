@@ -19,7 +19,7 @@ class ConfigLoaderEnvironmentTest(unittest.TestCase):
     def test_env_driver_with_defined_browser(self):
         self.assertEqual(env_driver(env('BROWSER')), webdriver.Chrome)
 
-    def test_env_driver_undefined_browser(self):
+    def test_env_driver_with_undefined_browser(self):
         self.assertEqual(env_driver(env('DB')), False)
 
     def test_get_database_with_defined_database_type(self):

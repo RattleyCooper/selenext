@@ -1,6 +1,6 @@
 """
 This is an example of what the a `SiteAutomation` might look like
-using Slack.  This controller is pretty bare-bones.
+using selenext.  This controller is pretty bare-bones.
 """
 
 from __future__ import print_function
