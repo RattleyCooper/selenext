@@ -1,6 +1,7 @@
 from __future__ import print_function
+from time import sleep
 from json import loads
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
 class PageElement(object):
@@ -78,6 +79,85 @@ class PageElement(object):
             return False
         except NoSuchElementException:
             return False
+
+    def wait_not_displayed(self, timeout=None):
+        """
+        Wait for the element to not be displayed any longer.
+
+        Args:
+            timeout: None or int
+
+        Returns:
+            self
+        """
+
+        wait_time = 0
+        while self().is_displayed():
+            sleep(1)
+            wait_time += 1
+            if timeout is not None:
+                if wait_time >= timeout:
+                    raise TimeoutException()
+        return self
+
+    def wait_displayed(self, timeout=None):
+        """
+        Wait for the element to be displayed.
+
+        Args:
+            timeout: None or int
+
+        Returns:
+            self
+        """
+
+        wait_time = 0
+        while not self().is_displayed():
+            sleep(1)
+            wait_time += 1
+            if timeout is not None:
+                if wait_time >= timeout:
+                    raise TimeoutException()
+        return self
+
+    def wait_appear(self, timeout=None):
+        """
+        Wait for the element to exist in the DOM.
+
+        Args:
+            timeout: None or int
+
+        Returns:
+            self
+        """
+
+        wait_time = 0
+        while not self.exists():
+            sleep(1)
+            wait_time += 1
+            if timeout is not None:
+                if wait_time >= timeout:
+                    raise TimeoutException()
+        return self
+
+    def wait_disappear(self, timeout=None):
+        """
+        Wait for the element to no longer exist in the DOM.
+
+        Args:
+            timeout: None or int
+
+        Returns:
+            self
+        """
+        wait_time = 0
+        while self.exists():
+            sleep(1)
+            wait_time += 1
+            if timeout is not None:
+                if wait_time >= timeout:
+                    raise TimeoutException()
+        return self
 
     def _handle_element_dict(self, element_dict):
         try:
