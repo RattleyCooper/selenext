@@ -1,6 +1,7 @@
 from __future__ import print_function
 import unittest
 
+from time import sleep
 from selenium.webdriver import Chrome
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -55,6 +56,19 @@ class PageTest(unittest.TestCase):
         self.assertIsInstance(self.page.view.search_form.parent, ParentElement)
         self.assertIsInstance(self.page.view.search_form.parent.parent, ParentElement)
         self.assertIsNone(self.page.view.search_input.parent)
+
+    def test_multiple_page_element(self):
+        self.page.get(self.page.root)
+        self.page.search_input.send_keys('cookies')
+        sleep(2)
+        self.page.search_button.click()
+
+        while not self.page.view.results.exists():
+            sleep(1)
+
+        self.assertIsInstance(self.page.results, list)
+        self.assertIsInstance(self.page.results[3], WebElement)
+        self.assertIsInstance(self.page.bound_results[3], str)
 
 
 def main():

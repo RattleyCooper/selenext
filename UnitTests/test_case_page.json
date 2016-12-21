@@ -18,6 +18,12 @@
       "selector": "//h3[@class='r']",
       "lookup_method": "xpath"
     },
+    "bound_results": {
+      "bind": "str",
+      "multiple": true,
+      "selector": "//h3[@class='r']",
+      "lookup_method": "xpath"
+    },
     "search_form": {
       "selector": "searchform",
       "lookup_method": "id",
