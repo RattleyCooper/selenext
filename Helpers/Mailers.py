@@ -7,7 +7,7 @@ class GMailer:
     """
     Send emails using Gmail.
     """
-    def __init__(self, username, password, host, port):
+    def __init__(self, username, password, host, port, tls=True, ehlo=True, anon=False):
         if type(username) != str and type(username) != unicode:
             raise TypeError('A string was expected for the username variable.')
         if type(password) != str and type(password) != unicode:
@@ -24,6 +24,9 @@ class GMailer:
         self.password = password
         self.host = host
         self.port = port
+        self.tls = tls
+        self.ehlo = ehlo
+        self.anon = anon
 
     def send_email(self, emails, subject, the_msg):
         """
@@ -47,9 +50,13 @@ class GMailer:
         msg += "\r\n{}".format(the_msg)
         smtp = smtplib.SMTP("{}:{}".format(self.host, self.port))
         print("Sending report...")
-        print(smtp.ehlo())
-        print(smtp.starttls())
-        print(smtp.login(self.username, self.password))
+
+        if self.ehlo:
+            print(smtp.ehlo())
+        if self.tls:
+            print(smtp.starttls())
+        if not self.anon:
+            print(smtp.login(self.username, self.password))
         print()
         print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()
@@ -82,9 +89,13 @@ class GMailer:
         msg += "\r\n" + attachment.as_string()
 
         smtp = smtplib.SMTP("{}:{}".format(self.host, self.port))
-        print(smtp.ehlo())
-        print(smtp.starttls())
-        print(smtp.login(self.username, self.password))
+
+        if self.ehlo:
+            print(smtp.ehlo())
+        if self.tls:
+            print(smtp.starttls())
+        if not self.anon:
+            print(smtp.login(self.username, self.password))
         print()
         print(smtp.sendmail(self.username, email_list, msg))
         smtp.close()

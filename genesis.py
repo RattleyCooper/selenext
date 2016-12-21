@@ -1,5 +1,5 @@
 """
-genesis.py is used for creating new Slack projects and writing program stubs.
+genesis.py is used for creating new selenext projects and writing program stubs.
 """
 
 from __future__ import print_function
@@ -176,13 +176,13 @@ DB_USERNAME=None
 DB_PASSWORD=None
 """
 
-    migrations_stub = """from Slack.Database import migrate
+    migrations_stub = """from selenext.Database import migrate
 import models
 
 migrate(models)
 """
     models_stub = """from peewee import *
-from Slack.Environment import get_database, env
+from selenext.Environment import get_database, env
 
 
 db = get_database(env("DB_TYPE"))
@@ -268,14 +268,14 @@ def make_gitignore(directory):
     gitignore_path = directory + '.gitignore'
     if not isfile(gitignore_path):
         print('Creating .gitignore...')
-        write_stub(gitignore_path, '.env')
+        write_stub(gitignore_path, '.env', append_py=False)
         print('.gitignore created...')
     return None
 
 
 def make_project(directory):
     """
-    Create a new Slack project in the given directory.
+    Create a new selenext project in the given directory.
 
     Args:
         directory: string
