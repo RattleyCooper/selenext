@@ -28,6 +28,26 @@ class ConfigLoaderEnvironmentTest(unittest.TestCase):
     def test_get_database_with_undefined_database_type(self):
         self.assertEqual(get_database(env('BROWSER')), False)
 
+    def test_get_list(self):
+        self.assertIsInstance(env('LIST'), list)
+
+    def test_get_dict(self):
+        self.assertIsInstance(env('DICT'), dict)
+
+    def test_list_values(self):
+        self.assertEqual(env('LIST')[0], 'Item1')
+        self.assertEqual(env('LIST')[1], 'Item2')
+
+    def test_dict_values(self):
+        self.assertEqual(env('DICT')['key1'], 'value1')
+        self.assertEqual(env('DICT')['key2'], 'value2')
+
+    def test_empty_list(self):
+        self.assertEqual(env('EMPTY_LIST'), [])
+
+    def test_empty_dict(self):
+        self.assertEqual(env('EMPTY_DICT'), {})
+
     def tearDown(self):
         pass
 
