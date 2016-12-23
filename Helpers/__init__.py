@@ -23,22 +23,43 @@ class PageState(object):
         :return: bool
         """
 
-        for aen in self._pull_from_dict(self._state_dict, 'appears'):
+        for aen in self._pull_from_dict(self._state_dict, 'exists'):
             if not self._get_page_element(aen).exists():
                 return False
 
-        for den in self._pull_from_dict(self._state_dict, 'disappears'):
+        for den in self._pull_from_dict(self._state_dict, 'absent'):
             if self._get_page_element(den).exists():
                 return False
 
         for nden in self._pull_from_dict(self._state_dict, 'not_displayed'):
             nden_page_element = self._get_page_element(nden)
-            if nden_page_element.exists():
-                if nden_page_element().is_displayed():
-                    return False
+            if not nden_page_element.exists():
+                return False
+            if nden_page_element.exists() and nden_page_element.is_displayed():
+                return False
 
-        for en in self._pull_from_dict(self._state_dict, 'displayed'):
-            if not self._get_page_element(en).exists():
+        for disen in self._pull_from_dict(self._state_dict, 'displayed'):
+            disen_page_element = self._get_page_element(disen)
+            disen_exists = disen_page_element.exists()
+            if not disen_exists:
+                return False
+            elif disen_exists and not disen_page_element().is_displayed():
+                return False
+
+        for enabled_en in self._pull_from_dict(self._state_dict, 'enabled'):
+            enabled_page_element = self._get_page_element(enabled_en)
+            enabled_exists = enabled_page_element.exists()
+            if not enabled_exists:
+                return False
+            elif enabled_exists and not enabled_page_element().is_enabled():
+                return False
+
+        for enabled_en in self._pull_from_dict(self._state_dict, 'disabled'):
+            enabled_page_element = self._get_page_element(enabled_en)
+            enabled_exists = enabled_page_element.exists()
+            if not enabled_exists:
+                return False
+            elif enabled_exists and enabled_page_element().is_enabled():
                 return False
 
         return True
@@ -56,22 +77,30 @@ class PageState(object):
 
         page_settings = self._state_dict
 
-        appears = self._pull_from_dict(page_settings, 'appears')
-        disappears = self._pull_from_dict(page_settings, 'disappears')
+        exists = self._pull_from_dict(page_settings, 'exists')
+        absent = self._pull_from_dict(page_settings, 'absent')
         not_displayed = self._pull_from_dict(page_settings, 'not_displayed')
         displayed = self._pull_from_dict(page_settings, 'displayed')
+        enabled = self._pull_from_dict(page_settings, 'enabled')
+        disabled = self._pull_from_dict(page_settings, 'disabled')
 
-        for appears_element_name in appears:
-            self._get_page_element(appears_element_name).wait_appear(timeout=timeout)
+        for appears_element_name in exists:
+            self._get_page_element(appears_element_name).wait_exists(timeout=timeout)
 
         for displayed_element_name in displayed:
             self._get_page_element(displayed_element_name).wait_displayed(timeout=timeout)
 
-        for disappear_element_name in disappears:
-            self._get_page_element(disappear_element_name).wait_disappear(timeout=timeout)
+        for enabled_element_name in enabled:
+            self._get_page_element(enabled_element_name).wait_enabled(timeout=timeout)
+
+        for disabled_element_name in disabled:
+            self._get_page_element(disabled_element_name).wait_disabled(timeout=timeout)
 
         for not_displayed_element_name in not_displayed:
             self._get_page_element(not_displayed_element_name).wait_not_displayed(timeout=timeout)
+
+        for disappear_element_name in absent:
+            self._get_page_element(disappear_element_name).wait_absent(timeout=timeout)
 
         return self
 
@@ -265,7 +294,51 @@ class PageElement(object):
         except NoSuchElementException:
             return False
 
-    def wait_not_displayed(self, timeout=None):
+    def wait_disabled(self, timeout=30):
+        """
+        Wait for the element to be disabled.
+
+        Args:
+            timeout: None or int
+
+        Returns:
+            self
+        """
+
+        wait_time = 0
+
+        web_element = self()
+        while web_element.is_enabled():
+            sleep(1)
+            wait_time += 1
+            if timeout is not None:
+                if wait_time >= timeout:
+                    raise TimeoutException()
+        return self
+
+    def wait_enabled(self, timeout=30):
+        """
+        Wait for the element to be enabled.
+
+        Args:
+            timeout: None or int
+
+        Returns:
+            self
+        """
+
+        wait_time = 0
+
+        web_element = self()
+        while not web_element.is_enabled():
+            sleep(1)
+            wait_time += 1
+            if timeout is not None:
+                if wait_time >= timeout:
+                    raise TimeoutException()
+        return self
+
+    def wait_not_displayed(self, timeout=30):
         """
         Wait for the element to not be displayed any longer.
 
@@ -298,9 +371,6 @@ class PageElement(object):
         """
 
         wait_time = 0
-        while not self.exists():
-            sleep(1)
-            wait_time += 1
 
         while not self().is_displayed():
             sleep(1)
@@ -310,9 +380,9 @@ class PageElement(object):
                     raise TimeoutException()
         return self
 
-    def wait_appear(self, timeout=None):
+    def wait_exists(self, timeout=None):
         """
-        Wait for the element to exist in the DOM.
+        Wait for the element to appear in the DOM.
 
         Args:
             timeout: None or int
@@ -330,9 +400,9 @@ class PageElement(object):
                     raise TimeoutException()
         return self
 
-    def wait_disappear(self, timeout=None):
+    def wait_absent(self, timeout=None):
         """
-        Wait for the element to no longer exist in the DOM.
+        Wait for the element to no longer appear in the DOM.
 
         Args:
             timeout: None or int
