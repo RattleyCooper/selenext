@@ -4,7 +4,162 @@ from json import loads
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
+class PageState(object):
+    """
+    Object for holding the definition of a web page's state, waiting for the state,
+    and checking to see if the web page is in the defined state.
+    """
+    def __init__(self, driver, elements, state_dict):
+        self._driver = driver
+        self._elements = elements
+        self._state_dict = state_dict
+
+    def __call__(self, *args, **kwargs):
+        """
+        Return True if the page matches the given state and False if not.
+
+        :param args:
+        :param kwargs:
+        :return: bool
+        """
+
+        for aen in self._pull_from_dict(self._state_dict, 'appears'):
+            if not self._get_page_element(aen).exists():
+                return False
+
+        for den in self._pull_from_dict(self._state_dict, 'disappears'):
+            if self._get_page_element(den).exists():
+                return False
+
+        for nden in self._pull_from_dict(self._state_dict, 'not_displayed'):
+            nden_page_element = self._get_page_element(nden)
+            if nden_page_element.exists():
+                if nden_page_element().is_displayed():
+                    return False
+
+        for en in self._pull_from_dict(self._state_dict, 'displayed'):
+            if not self._get_page_element(en).exists():
+                return False
+
+        return True
+
+    def wait(self, timeout=30):
+        """
+        Wait for the conditions set in the state dict to be met.
+
+        Args:
+            timeout:
+
+        Returns:
+            self
+        """
+
+        page_settings = self._state_dict
+
+        appears = self._pull_from_dict(page_settings, 'appears')
+        disappears = self._pull_from_dict(page_settings, 'disappears')
+        not_displayed = self._pull_from_dict(page_settings, 'not_displayed')
+        displayed = self._pull_from_dict(page_settings, 'displayed')
+
+        for appears_element_name in appears:
+            self._get_page_element(appears_element_name).wait_appear(timeout=timeout)
+
+        for displayed_element_name in displayed:
+            self._get_page_element(displayed_element_name).wait_displayed(timeout=timeout)
+
+        for disappear_element_name in disappears:
+            self._get_page_element(disappear_element_name).wait_disappear(timeout=timeout)
+
+        for not_displayed_element_name in not_displayed:
+            self._get_page_element(not_displayed_element_name).wait_not_displayed(timeout=timeout)
+
+        return self
+
+    def _pull_from_dict(self, settings, name):
+        try:
+            return settings[name]
+        except KeyError:
+            return []
+
+    def _get_page_element(self, name):
+        """
+        Get a PageElement from the datastore using the given name.
+        Args:
+            name:
+
+        Returns:
+
+        """
+        ele = self._elements[name]
+        if isinstance(ele, PageElement):
+            output_element = self._elements[name]
+        else:
+            output_element = PageElement(self._driver, ele)
+
+        return output_element
+
+
+class PageStateContainer(object):
+    """
+    Container for holding PageState objects and allowing dynamic access to them as attributes.
+    """
+    def __init__(self, driver, elements, state_dict):
+        self._driver = driver
+        self._elements = elements
+        self._state_dict = state_dict
+        self._handle_state_dict(state_dict)
+
+    def _handle_state_dict(self, state_dict):
+        """
+        Handle the definition of the web page states by setting up the _states attributes and
+        dynamically setting up the rest of the attributes in the dictionary.
+
+        Args:
+            state_dict:
+
+        Returns:
+
+        """
+        try:
+            state_dict_iterator = state_dict.iteritems()
+        except AttributeError:
+            state_dict_iterator = state_dict.items()
+
+        self._states = {}
+
+        for page_name, settings in state_dict_iterator:
+            self._states[page_name] = PageState(self._driver, self._elements, settings)
+            setattr(self, page_name, self._states[page_name])
+
+        return self
+
+    def wait(self, state_name, timeout=30):
+        """
+        Wait for the web page to be in the defined state(by state_name). Only invoke this
+        method when you expect the web page to be in that current state.
+
+        Args:
+            state_name:
+            timeout:
+
+        Returns:
+            self
+        """
+
+        state = getattr(self, state_name)
+        state.wait(timeout=timeout)
+
+        return self
+
+
 class PageElement(object):
+    """
+    The PageElement object holds a selenium WebDriver instance and directions on how to
+    find a given element on the page.  When an instance of the PageElement object has
+    it's __call__ method invoked it will use the WebDriver instance to look up and
+    return the WebElement it finds.  If the element cannot be found, it will raise
+    the same selenium error.
+    """
     def __init__(self, driver, element_dict):
         self.driver = driver
         self.element_dict = element_dict
@@ -43,9 +198,32 @@ class PageElement(object):
         self._handle_element_dict(element_dict)
 
     def _handle_parent(self, parent_location):
+        """
+        Return a parent element based on teh parent location dictionary.
+
+        Args:
+            parent_location:
+
+        Returns:
+            ParentElement
+        """
+
         return ParentElement(self.driver, parent_location)
 
     def __call__(self, *args, **kwargs):
+        """
+        Lookup the WebElement using the WebDriver.  It will navigate parent elements
+        and even frames.  Frames can even be selected using parent elements(in the
+        JSON).
+
+        Args:
+            *args:
+            **kwargs:
+
+        Returns:
+            WebElement
+        """
+
         if not isinstance(self, Frame):
             self.driver.switch_to_default_content()
 
@@ -71,6 +249,13 @@ class PageElement(object):
         return output
 
     def exists(self):
+        """
+        Return true if the element exists.
+
+        Returns:
+            bool
+        """
+
         try:
             lookup_method = self._get_lookup_method()
             ele = lookup_method(getattr(self, 'selector'))
@@ -92,6 +277,7 @@ class PageElement(object):
         """
 
         wait_time = 0
+
         while self().is_displayed():
             sleep(1)
             wait_time += 1
@@ -112,6 +298,10 @@ class PageElement(object):
         """
 
         wait_time = 0
+        while not self.exists():
+            sleep(1)
+            wait_time += 1
+
         while not self().is_displayed():
             sleep(1)
             wait_time += 1
@@ -150,6 +340,7 @@ class PageElement(object):
         Returns:
             self
         """
+
         wait_time = 0
         while self.exists():
             sleep(1)
@@ -160,6 +351,16 @@ class PageElement(object):
         return self
 
     def _handle_element_dict(self, element_dict):
+        """
+        Set attributes based on the given dict.
+
+        Args:
+            element_dict:
+
+        Returns:
+            self
+        """
+
         try:
             iterable = element_dict.iteritems()
         except AttributeError:
@@ -168,7 +369,16 @@ class PageElement(object):
         for k, v in iterable:
             setattr(self, k, v)
 
+        return self
+
     def _get_lookup_method(self):
+        """
+        Return the method used for looking up the element.
+
+        Returns:
+            WebDriver method
+        """
+
         if self.parent is not None:
             parent = getattr(self, 'parent')()
         else:
@@ -182,6 +392,16 @@ class PageElement(object):
         return lookup_method
 
     def _get_bind(self, bind_path):
+        """
+        Get the callable object based on the bind path given.
+
+        Args:
+            bind_path:
+
+        Returns:
+            callable
+        """
+
         # Handle direct imports
         if type(bind_path) == list:
             imp, obj = bind_path
@@ -206,14 +426,30 @@ class PageElement(object):
         return new_func
 
     def _handle_frame(self, frame_location):
+        """
+        Return a Frame instance based on the given frame location.
+
+        Args:
+            frame_location:
+
+        Returns:
+            Frame
+        """
+
         return Frame(self.driver, frame_location)
 
 
 class ParentElement(PageElement):
+    """
+    Needed so the PageElement object knows to handle these instances differently.
+    """
     pass
 
 
 class Frame(PageElement):
+    """
+    Needed so the PageElement object knows to handle these instances differently.
+    """
     pass
 
 
@@ -236,6 +472,16 @@ class View(object):
         self._handle_view_dict(json)
 
     def get(self, item):
+        """
+        Wrapper around WebDriver().get()
+
+        Args:
+            item:
+
+        Returns:
+
+        """
+
         return self.driver.get(item)
 
     def __getattribute__(self, item):
@@ -245,6 +491,16 @@ class View(object):
         return thing
 
     def _handle_view_dict(self, json_dict):
+        """
+        Handle the elements in the view dict.  Set attributes and handle all the
+        special attributes in the dict.
+
+        Args:
+            json_dict:
+
+        Returns:
+            self
+        """
         try:
             iterable = json_dict.iteritems()
         except AttributeError:
@@ -253,10 +509,26 @@ class View(object):
         for k, v in iterable:
             if k == 'elements':
                 self._handle_elements(v)
-
+            if k == 'states':
+                k = '_states'
             setattr(self, k, v)
 
+        if hasattr(self, 'elements') and hasattr(self, '_states'):
+            self.state = PageStateContainer(self.driver, self.elements, self._states)
+
+        return self
+
     def _handle_elements(self, element_dict):
+        """
+        Set up the elements dictionary along with the element attributes.
+
+        Args:
+            element_dict:
+
+        Returns:
+            self
+        """
+
         try:
             element_dict_iterator = element_dict.iteritems()
         except AttributeError:
