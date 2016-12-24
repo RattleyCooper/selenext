@@ -232,12 +232,17 @@ class PageElement(object):
 
         Args:
             parent_location:
+                dict
 
         Returns:
             ParentElement
         """
 
-        return ParentElement(self.driver, parent_location)
+        if not isinstance(parent_location, ParentElement):
+            element = ParentElement(self.driver, parent_location)
+        else:
+            element = parent_location
+        return element
 
     def __call__(self, *args, **kwargs):
         """
@@ -299,7 +304,8 @@ class PageElement(object):
         Wait for the element to be disabled.
 
         Args:
-            timeout: None or int
+            timeout:
+                None or int
 
         Returns:
             self
@@ -321,7 +327,8 @@ class PageElement(object):
         Wait for the element to be enabled.
 
         Args:
-            timeout: None or int
+            timeout:
+                None or int
 
         Returns:
             self
@@ -343,7 +350,8 @@ class PageElement(object):
         Wait for the element to not be displayed any longer.
 
         Args:
-            timeout: None or int
+            timeout:
+                None or int
 
         Returns:
             self
@@ -364,7 +372,8 @@ class PageElement(object):
         Wait for the element to be displayed.
 
         Args:
-            timeout: None or int
+            timeout:
+                None or int
 
         Returns:
             self
@@ -385,7 +394,8 @@ class PageElement(object):
         Wait for the element to appear in the DOM.
 
         Args:
-            timeout: None or int
+            timeout:
+                None or int
 
         Returns:
             self
@@ -405,7 +415,8 @@ class PageElement(object):
         Wait for the element to no longer appear in the DOM.
 
         Args:
-            timeout: None or int
+            timeout:
+                None or int
 
         Returns:
             self
@@ -426,7 +437,7 @@ class PageElement(object):
 
         Args:
             element_dict:
-
+                dict
         Returns:
             self
         """
@@ -467,7 +478,7 @@ class PageElement(object):
 
         Args:
             bind_path:
-
+                str or int
         Returns:
             callable
         """
@@ -501,7 +512,7 @@ class PageElement(object):
 
         Args:
             frame_location:
-
+                dict
         Returns:
             Frame
         """
@@ -624,6 +635,13 @@ class Page(object):
         self.view = View(driver, json, file=file)
 
     def __bool__(self):
+        """
+        Use the page object as a bool to check to see if everything on the page exists.
+
+        Returns:
+            bool
+        """
+
         try:
             iterable = self.view.elements.iteritems()
         except AttributeError:
@@ -637,6 +655,16 @@ class Page(object):
         return True
 
     def __getattr__(self, item):
+        """
+        Check to see if the attribute exists on the `View` object.
+
+        Args:
+            item:
+                str
+        Returns:
+            mixed
+        """
+
         # Check if the page_view has the item.
         if hasattr(self.view, item):
             # Handle PageElements by calling the instance and getting the
@@ -646,7 +674,7 @@ class Page(object):
             # Handle any other items.
             return getattr(self.view, item)
 
-        raise AttributeError()
+        raise AttributeError("{} is not set as an attribute.".format(item))
 
 
 class MetaObject(object):
@@ -659,7 +687,6 @@ class MetaObject(object):
     and the value is set to the current object in the list.
 
     Example:
-
         from decimal import Decimal
 
         class Price(Decimal):
@@ -706,6 +733,16 @@ class MetaObject(object):
         return self
 
     def __add__(self, other):
+        """
+        Add MetaObjects together.
+
+        Args:
+            other:
+                MetaObject
+        Returns:
+            MetaObject
+        """
+
         if isinstance(other, MetaObject):
             i1, i2 = list(self._dict.values()), list(other._dict.values())
             return MetaObject(i1 + i2)
