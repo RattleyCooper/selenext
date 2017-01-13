@@ -1,6 +1,5 @@
 from __future__ import print_function
 from time import sleep
-from json import loads
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
@@ -119,6 +118,7 @@ class PageState(object):
         Returns:
 
         """
+
         ele = self._elements[name]
         if isinstance(ele, PageElement):
             output_element = self._elements[name]
@@ -145,9 +145,9 @@ class PageStateContainer(object):
 
         Args:
             state_dict:
-
+                dict
         Returns:
-
+            self
         """
         try:
             state_dict_iterator = state_dict.iteritems()
@@ -169,7 +169,9 @@ class PageStateContainer(object):
 
         Args:
             state_name:
+                str
             timeout:
+                None or int
 
         Returns:
             self
@@ -314,6 +316,17 @@ class PageElement(object):
         wait_time = 0
 
         web_element = self()
+
+        if type(web_element) == list:
+            for thing in web_element:
+                while thing.is_enabled():
+                    sleep(1)
+                    wait_time += 1
+                    if timeout is not None:
+                        if wait_time >= timeout:
+                            raise TimeoutException()
+            return self
+
         while web_element.is_enabled():
             sleep(1)
             wait_time += 1
@@ -337,6 +350,17 @@ class PageElement(object):
         wait_time = 0
 
         web_element = self()
+
+        if type(web_element) == list:
+            for thing in web_element:
+                while not thing.is_enabled():
+                    sleep(1)
+                    wait_time += 1
+                    if timeout is not None:
+                        if wait_time >= timeout:
+                            raise TimeoutException()
+            return self
+
         while not web_element.is_enabled():
             sleep(1)
             wait_time += 1
@@ -359,7 +383,19 @@ class PageElement(object):
 
         wait_time = 0
 
-        while self().is_displayed():
+        ele = self()
+
+        if type(ele) == list:
+            for thing in ele:
+                while thing.is_displayed():
+                    sleep(1)
+                    wait_time += 1
+                    if timeout is not None:
+                        if wait_time >= timeout:
+                            raise TimeoutException()
+            return self
+
+        while ele.is_displayed():
             sleep(1)
             wait_time += 1
             if timeout is not None:
@@ -381,7 +417,19 @@ class PageElement(object):
 
         wait_time = 0
 
-        while not self().is_displayed():
+        ele = self()
+
+        if type(ele) == list:
+            for thing in ele:
+                while not thing.is_displayed():
+                    sleep(1)
+                    wait_time += 1
+                    if timeout is not None:
+                        if wait_time >= timeout:
+                            raise TimeoutException()
+            return self
+
+        while not ele.is_displayed():
             sleep(1)
             wait_time += 1
             if timeout is not None:
@@ -402,6 +450,7 @@ class PageElement(object):
         """
 
         wait_time = 0
+
         while not self.exists():
             sleep(1)
             wait_time += 1
@@ -536,21 +585,13 @@ class Frame(PageElement):
 
 class View(object):
     """
-    The View object is a container for view/page's JSON definition.  It sets up
+    The View object is a container for view/page's element dict.  It sets up
     everything so that the page object can access what it needs.
     """
-    def __init__(self, driver, json, file=False):
+    def __init__(self, driver, view_dict):
         self.driver = driver
-
-        if file:
-            with open(json, 'r') as f:
-                json = f.read().strip()
-
-        if type(json) == str:
-            json = loads(json)
-
-        self.json_dict = json
-        self._handle_view_dict(json)
+        self.view_dict = view_dict
+        self._handle_view_dict(view_dict)
 
     def get(self, item):
         """
@@ -571,21 +612,21 @@ class View(object):
         #     return thing()
         return thing
 
-    def _handle_view_dict(self, json_dict):
+    def _handle_view_dict(self, view_dict):
         """
         Handle the elements in the view dict.  Set attributes and handle all the
         special attributes in the dict.
 
         Args:
-            json_dict:
+            view_dict:
 
         Returns:
             self
         """
         try:
-            iterable = json_dict.iteritems()
+            iterable = view_dict.iteritems()
         except AttributeError:
-            iterable = json_dict.items()
+            iterable = view_dict.items()
 
         for k, v in iterable:
             if k == 'elements':
@@ -630,9 +671,9 @@ class Page(object):
     The Page object is a light wrapper around the View object.  They are almost the same
     but the Page object makes accessing elements on the page a bit simpler.
     """
-    def __init__(self, driver, json, file=False):
+    def __init__(self, driver, view_dict):
         self.driver = driver
-        self.view = View(driver, json, file=file)
+        self.view = View(driver, view_dict)
 
     def __bool__(self):
         """
