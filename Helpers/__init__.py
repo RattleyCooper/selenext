@@ -270,6 +270,9 @@ class PageElement(object):
         lookup_method = self._get_lookup_method()
 
         output = lookup_method(getattr(self, 'selector'))
+        if hasattr(self, 'index') and type(output) == list:
+            output = output[int(self.index)]
+
         # Since parents are used to locate elements, we
         # don't need to worry about any bindings.
         if isinstance(self, ParentElement):
