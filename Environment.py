@@ -12,7 +12,7 @@ __SELENEXT_FRAMEWORK_ENV_PATH += '/.env' if __SELENEXT_FRAMEWORK_ENV_PATH[-1] !=
 
 
 if EnvironmentContainer.container == {}:
-    ConfigParser(filepath=__SELENEXT_FRAMEWORK_ENV_PATH).load()
+    ConfigParser(EnvironmentContainer, filepath=__SELENEXT_FRAMEWORK_ENV_PATH).load()
 
 
 def env(variable_name, func=lambda x: x):
@@ -28,7 +28,7 @@ def env(variable_name, func=lambda x: x):
     Returns:
         string
     """
-
+    
     return func(EnvironmentContainer.container[variable_name])
 
 

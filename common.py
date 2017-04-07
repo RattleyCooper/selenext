@@ -8,45 +8,9 @@ class EnvironmentContainer(object):
 
     container = {}
 
-    def __getattribute__(self, item):
-        if item == 'container':
-            return object.__getattribute__(self, 'container')
-
-        try:
-            return object.__getattribute__(self, 'container')[item]
-        except KeyError:
-            return object.__getattribute__(self, item)
-
-    def __getitem__(self, item):
-        container = object.__getattribute__(self, 'container')
-        return container[item]
-
-    def __setattr__(self, key, value):
-        if key == 'container':
-            object.__setattr__(self, key, value)
-            return
-        container = object.__getattribute__(self, 'container')
-        container[key] = value
-        return self
-
-    def __setitem__(self, key, value):
-        container = object.__getattribute__(self, 'container')
-        container[key] = value
-        return self
-
-    def __call__(self, *args, **kwargs):
-        # Set value in container if there are 2 args
-        if len(args) == 2:
-            self.container[args[0]] = args[1]
-            return self
-
-        # Retrieve a value for the given arg if 1 arg.
-        container = object.__getattribute__(self, 'container')
-        return container[args[0]]
-
 
 class ConfigParser:
-    def __init__(self, filepath='.env'):
+    def __init__(self, container, filepath='.env'):
         self.filepath = filepath
         self.lines = {}
         self.list_mode = False
@@ -54,7 +18,7 @@ class ConfigParser:
         self.dict_mode = False
         self.dict_name = None
         self.sline = None
-        self.container = EnvironmentContainer()
+        self.container = container
 
     def load(self):
         filepath = self.filepath
@@ -110,7 +74,7 @@ class ConfigParser:
                     self.dict_name = self.sline[:-3]
                     continue
         for k, v in self.lines.items():
-            self.container[k] = v
+            EnvironmentContainer.container[k] = v
 
     def check_for_list_mode(self, line):
         """
