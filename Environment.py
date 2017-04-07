@@ -11,7 +11,8 @@ __SELENEXT_FRAMEWORK_ENV_PATH = getcwd()\
 __SELENEXT_FRAMEWORK_ENV_PATH += '/.env' if __SELENEXT_FRAMEWORK_ENV_PATH[-1] != '/' else '.env'
 
 
-ConfigParser(filepath=__SELENEXT_FRAMEWORK_ENV_PATH).load()
+if EnvironmentContainer.container == {}:
+    ConfigParser(filepath=__SELENEXT_FRAMEWORK_ENV_PATH).load()
 
 
 def env(variable_name, func=lambda x: x):
