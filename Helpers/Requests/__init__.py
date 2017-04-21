@@ -64,6 +64,16 @@ class WebElement(object):
         return None
 
     def find_element_by_id(self, element_id):
+        """
+        Find an element in the DOM by id.
+
+        Args:
+            element_id:
+
+        Returns:
+            WebElement
+        """
+
         ele = self.soup.find(id=element_id)
         if ele is None:
             raise NoSuchElementException('The element could not be located by id: {}'.format(element_id))
@@ -71,6 +81,15 @@ class WebElement(object):
         return WebElement(ele, self.current_response, self.current_url, parent=self.id)
 
     def find_element_by_name(self, name):
+        """
+        Find an element in the DOM by name.
+
+        Args:
+            name:
+
+        Returns:
+            WebElement
+        """
         ele = self.soup.find(attrs={'name': name})
         if ele is None:
             raise NoSuchElementException('The element could not be located by name: {}'.format(name))
@@ -78,6 +97,15 @@ class WebElement(object):
         return WebElement(ele, self.current_response, self.current_url, parent=self.id)
 
     def find_element_by_class_name(self, class_name):
+        """
+        Find an element in the DOM by class name.
+
+        Args:
+            class_name:
+
+        Returns:
+            WebElement
+        """
         ele = self.soup.find(attrs={'class': class_name})
         if ele is None:
             raise NoSuchElementException('The element could not be located by class name: {}'.format(class_name))
@@ -85,6 +113,16 @@ class WebElement(object):
         return WebElement(ele, self.current_response, self.current_url, parent=self.id)
 
     def find_element_by_tag_name(self, tag_name):
+        """
+        Find an element by tag name.
+
+        Args:
+            tag_name:
+
+        Returns:
+            WebElement
+        """
+
         ele = self.soup.find(tag_name)
         if ele is None:
             raise NoSuchElementException('The element could not be located by tag name: {}'.format(tag_name))
@@ -92,6 +130,15 @@ class WebElement(object):
         return WebElement(ele, self.current_response, self.current_url, parent=self.id)
 
     def find_element_by_css_selector(self, selector):
+        """
+        Find an element in the DOM by css selector.
+
+        Args:
+            selector:
+
+        Returns:
+            WebElement
+        """
         ele = self.soup.select(selector)[0]
         if ele is None:
             raise NoSuchElementException('The element could not be located by css selector: {}'.format(selector))
@@ -99,6 +146,16 @@ class WebElement(object):
         return WebElement(ele, self.current_response, self.current_url, parent=self.id)
 
     def find_element_by_xpath(self, xpath):
+        """
+        Find an element in the DOM by xpath.
+
+        Args:
+            xpath:
+
+        Returns:
+            WebElement
+        """
+
         tree = etree.fromstring(self.current_response, etree.HTMLParser())
         element = tree.xpath(xpath)[0]
         self.current_response = etree.tostring(element)
@@ -107,31 +164,90 @@ class WebElement(object):
 
     # %%%%%%%%%%%%%%%%%%% Find elements %%%%%%%%%%%%%%%%%%% #
     def find_elements_by_id(self, element_id):
+        """
+        Find all elements in the DOM matching the given id.
+
+        Args:
+            element_id:
+
+        Returns:
+            list
+        """
+
         resp = self.current_response
         url = self.current_url
         return [WebElement(element, resp, url, parent=self.id) for element in self.soup.find_all(id=element_id)]
 
     def find_elements_by_name(self, name):
+        """
+        Find all elements in the DOM matching the given name.
+
+        Args:
+            name:
+
+        Returns:
+            list
+        """
+
         resp = self.current_response
         url = self.current_url
         return [WebElement(element, resp, url, parent=self.id) for element in self.soup.find_all(attrs={'name': name})]
 
     def find_elements_by_class_name(self, name):
+        """
+        Find all elements in the DOM matching the given class name.
+
+        Args:
+            name:
+
+        Returns:
+            list
+        """
         resp = self.current_response
         url = self.current_url
         return [WebElement(element, resp, url, parent=self.id) for element in self.soup.find_all(attrs={'class': name})]
 
     def find_elements_by_tag_name(self, name):
+        """
+        Find all elements in the DOM matching the given tag name.
+
+        Args:
+            name:
+
+        Returns:
+            list
+        """
+
         resp = self.current_response
         url = self.current_url
         return [WebElement(element, resp, url, parent=self.id) for element in self.soup.find_all(name)]
 
     def find_elements_by_css_selector(self, selector):
+        """
+        Find all elements in the DOM matching the given css selector.
+
+        Args:
+            selector:
+
+        Returns:
+            list
+        """
+
         resp = self.current_response
         url = self.current_url
         return [WebElement(element, resp, url, parent=self.id) for element in self.soup.select(selector)]
 
     def find_elements_by_xpath(self, xpath):
+        """
+        Find all elements in the DOM matching the given xpath.
+
+        Args:
+            xpath:
+
+        Returns:
+            list
+        """
+
         tree = etree.fromstring(self.current_response, etree.HTMLParser())
         elements = tree.xpath(xpath)
 
