@@ -1,18 +1,30 @@
 from os import getcwd
 from .common import EnvironmentContainer
-from .common import ConfigParser
 
 
-__SELENEXT_FRAMEWORK_ENV_PATH = getcwd()\
-                                 .replace('\\', '/')\
-                                 .replace('SiteAutomations', '')\
-                                 .replace('Jobs', '')
+def load_env():
+    """
+    Load the project's local .env file into the `EnvironmentContainer`.
+    Since the `EnvironmentContainer`'s `container` attribute is a
+    static attribute, any new instances should have the same
+    attributes set.
 
-__SELENEXT_FRAMEWORK_ENV_PATH += '/.env' if __SELENEXT_FRAMEWORK_ENV_PATH[-1] != '/' else '.env'
+    Returns:
+        None
+    """
+
+    from .common import ConfigParser
+
+    filepath = getcwd().replace('\\', '/').replace('SiteAutomations', '').replace('Jobs', '')
+    filepath += '/.env' if filepath[-1] != '/' else '.env'
+
+    ConfigParser(EnvironmentContainer, filepath=filepath).load()
+    return
 
 
+# If the .env file has not been loaded, then load it!
 if EnvironmentContainer.container == {}:
-    ConfigParser(EnvironmentContainer, filepath=__SELENEXT_FRAMEWORK_ENV_PATH).load()
+    load_env()
 
 
 def env(variable_name, func=lambda x: x):
@@ -28,7 +40,7 @@ def env(variable_name, func=lambda x: x):
     Returns:
         string
     """
-    
+
     return func(EnvironmentContainer.container[variable_name])
 
 
