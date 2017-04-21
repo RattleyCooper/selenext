@@ -38,6 +38,7 @@ class Kwargs(object):
 
     def __delitem__(self, key):
         del self.dictionary[key]
+        return self
 
     def __iter__(self):
         try:
