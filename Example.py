@@ -22,6 +22,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 #   with quitting(web_driver()) as driver:
 #       pass
 #
+
+
 with quitting(env_driver(env("BROWSER"))()) as driver:
     wait = WebDriverWait(driver, 30)
 
