@@ -8,11 +8,12 @@ class GMailer:
     Send emails using Gmail.
     """
     def __init__(self, username, password, host, port, tls=True, ehlo=True, anon=False):
-        if type(username) != str and type(username) != unicode:
+        username_type = type(username)
+        if username_type != str and not isinstance(username, type(u'')):
             raise TypeError('A string was expected for the username variable.')
-        if type(password) != str and type(password) != unicode:
+        if type(password) != str and not isinstance(password, type(u'')):
             raise TypeError('A string was expected for the password variable.')
-        if type(host) != str and type(host) != unicode:
+        if type(host) != str and not isinstance(host, type(u'')):
             raise TypeError('A string was expected for the host variable.')
         if type(port) != int:
             try:
