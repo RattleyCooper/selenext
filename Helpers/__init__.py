@@ -1,6 +1,7 @@
 from __future__ import print_function
 from time import sleep
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from json import loads
 
 
 class PageState(object):
@@ -720,6 +721,15 @@ class Page(object):
             return getattr(self.view, item)
 
         raise AttributeError("{} is not set as an attribute.".format(item))
+
+
+def load_page(filepath, driver):
+    fstring = False
+    with open(filepath, 'r') as f:
+        fstring = f.read()
+    if not fstring:
+        return False
+    return Page(driver, loads(fstring))
 
 
 class MetaObject(object):
