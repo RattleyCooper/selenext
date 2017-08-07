@@ -676,6 +676,7 @@ class Page(object):
     """
     def __init__(self, driver, view_dict):
         self.driver = driver
+        view_dict = dict(view_dict)
         self.view = View(driver, view_dict)
 
     def __bool__(self):
