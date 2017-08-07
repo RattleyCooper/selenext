@@ -724,9 +724,23 @@ class Page(object):
 
 
 def load_page(filepath, driver):
-    fstring = False
+    """
+    Return a `Page` object for the given `filepath` and `WebDriver`.
+
+    Args:
+        filepath:
+            str
+        driver:
+            WebDriver
+    Returns:
+        Page
+    """
+
+    fstring = ''
     with open(filepath, 'r') as f:
-        fstring = f.read()
+        fstring = f.read() if fstring == '' else fstring
+
+    # Early return
     if not fstring:
         return False
     return Page(driver, loads(fstring))
