@@ -680,6 +680,11 @@ class Page(object):
         view_dict = dict(view_dict)
         self.view = View(driver, view_dict)
 
+    def wait_ready(self, wait=0.1):
+        while self.driver.execute_script('return document.readyState') != 'complete':
+            sleep(wait)
+        return self
+
     def __bool__(self):
         """
         Use the page object as a bool to check to see if everything on the page exists.
