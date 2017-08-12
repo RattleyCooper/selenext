@@ -166,11 +166,13 @@ class LoginPageController(PageController):
         super(LoginPageController, self).__init__(page)
 
     @randomly_waits
-    def do_login(self, username, password, remember_me=False, stay_logged_in=False, wait_func=False):
+    def do_login(self, username, password, remember_me=False, stay_logged_in=False, wait_func=False, navigate=False):
         """
         Log in to a web page using the given `Page` object as a template.  The `username` and `password`
-        attributes must be set on the `Page` object.  If you want to use the `remember_me` keyword arg,
-        you must also have that attribute set on the `Page` object.
+        attributes must be set on the `Page` object along with an attribute that defines a `logged_in`
+        `PageState`.  If you want to use the `remember_me` keyword arg, you must also have that attribute
+        set on the `Page` object.  If you want the function to navigate to the login page and wait for the
+        login form to be presented you need to set the `login_form_displayed` `PageState` and
 
         Args:
             username: str
@@ -178,10 +180,16 @@ class LoginPageController(PageController):
             remember_me: bool
             stay_logged_in: bool
             wait_func: func, bool
+            navigate: bool
 
         Returns:
             self
         """
+
+        if navigate:
+            self.page.get(self.page.login_page)
+            self.page.state.login_form_displayed.wait()
+
         self.fill(self.page.username, username)
         self.fill(self.page.password, password)
 
@@ -199,6 +207,8 @@ class LoginPageController(PageController):
         # Call the wait function.
         if wait_func:
             self.wait.until(wait_func)
+
+        self.page.state.logged_in.wait()
 
         return self
     
