@@ -2,6 +2,7 @@ from __future__ import print_function
 from time import sleep
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from json import loads
+import re
 
 
 class PageState(object):
@@ -264,12 +265,16 @@ class PageElement(object):
         if not isinstance(self, Frame):
             self.driver.switch_to_default_content()
 
+        # Navigate to the given frame.
         if hasattr(self, 'frame'):
             frame = getattr(self, 'frame')
             self.driver.switch_to.frame(frame())
 
+        # Get the selenium driver method that is used to look up the element.
+        # find_element_by_*
         lookup_method = self._get_lookup_method()
 
+        # Get the web element using the given selector and lookup method.
         output = lookup_method(getattr(self, 'selector'))
         if hasattr(self, 'index') and type(output) == list:
             output = output[int(self.index)]
@@ -278,6 +283,29 @@ class PageElement(object):
         # don't need to worry about any bindings.
         if isinstance(self, ParentElement):
             return output
+
+        # Run any regex search statements on the text output.
+        if hasattr(self, 'regex'):
+            regex_flags = 0 if not hasattr(self, 'regex_flags') else getattr(self, 'regex_flags')
+            # Handle case where the `multiple` flag is set in the JSON and the `regex` flag is set.
+            if type(output) == list:
+                output = [re.search(getattr(self, 'regex'), t.text, flags=regex_flags) for t in output]
+                output = [match.group() for match in output if match is not None]
+            else:
+                # Since the `multiple` flag is not set we can go ahead and do the regex search on
+                # the output text.
+                output = re.search(getattr(self, 'regex'), output.text, flags=regex_flags)
+                if output is not None:
+                    output = output.group()
+
+        # Run any regex findall statements on the text output.
+        if hasattr(self, 'regex_all'):
+            # Handle the case where the `multiple` flag is set in the JSON and the `regex_all` flag is set.
+            regex_flags = 0 if not hasattr(self, 'regex_flags') else getattr(self, 'regex_flags')
+            if type(output) == list:
+                output = [re.findall(getattr(self, 'regex_all'), t.text, flags=regex_flags) for t in output]
+            else:
+                output = re.findall(getattr(self, 'regex_all'), output.text, flags=regex_flags)
 
         # Bind the text if needed.
         if hasattr(self, 'bind'):
@@ -290,7 +318,8 @@ class PageElement(object):
 
     def exists(self):
         """
-        Return true if the element exists.
+        Return true if the element exists and/or the given element contains text that matches
+        the given regex pattern(if set).
 
         Returns:
             bool
@@ -299,7 +328,20 @@ class PageElement(object):
         try:
             lookup_method = self._get_lookup_method()
             ele = lookup_method(getattr(self, 'selector'))
+
             if ele:
+                # Check if we have a list of elements instead of a single element.
+                # if type(ele) != list:
+                #     # Check the regex attribute to see if we need to extract anything.
+                #     if hasattr(self, 'regex'):
+                #         # Run a regex search to see if we get any results.
+                #         if re.search(getattr(self, 'regex'), ele.text) is None:
+                #             return False
+                #     # If we have a regex_all flag then we need to run the re.findall method on the pattern
+                #     # and element text to see if we get a match.
+                #     elif hasattr(self, 'regex_all'):
+                #         if not re.findall(getattr(self, 'regex_all'), ele.text):
+                #             return False
                 return True
             return False
         except NoSuchElementException:
