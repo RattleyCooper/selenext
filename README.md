@@ -4,7 +4,9 @@ selenext is a micro-framework for web automation/scraping using selenium in Pyth
 
 Just download this as a .zip and then unzip the `selenext` directory into 
 your `site-packages` folder. Once there is a stable release, there will 
-be a pip install available.
+be a pip install available.  You can also grab the repository and pull
+updates from github, just create a symbolic link to the selenext directory
+into your python path.
 
 ## Dependencies
 
@@ -18,6 +20,8 @@ You'll need Selenium for doing any browser automation or web scraping.
 
 * [selenium python bindings](http://selenium-python.readthedocs.org/)
 `pip install selenium`
+
+You also need the a Web Driver executable like [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 
 ## Optional Dependencies
 
