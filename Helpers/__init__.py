@@ -1,6 +1,7 @@
 from __future__ import print_function
 from time import sleep
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from .Requests import WebReader
 from json import loads
 import re
 
@@ -193,10 +194,11 @@ class PageElement(object):
     return the WebElement it finds.  If the element cannot be found, it will raise
     the same selenium error.
     """
-    def __init__(self, driver, element_dict):
+    def __init__(self, driver, element_dict):  # , parent=None):
         self.driver = driver
         self.element_dict = element_dict
         self.parent = None
+        # self.parent = parent
 
         try:
             bind_path = element_dict['bind']
@@ -262,7 +264,7 @@ class PageElement(object):
             WebElement
         """
 
-        if not isinstance(self, Frame):
+        if not isinstance(self, Frame) and not isinstance(self.driver, WebReader):
             self.driver.switch_to_default_content()
 
         # Navigate to the given frame.
@@ -706,7 +708,25 @@ class View(object):
 
         for element_name, the_dict in element_dict_iterator:
             # Set the element up in the dict.
+
             self.elements[element_name] = PageElement(self.driver, the_dict)
+
+            # has_parent = False
+            # try:
+            #     _ = the_dict['parent']
+            #     has_parent = True
+            # except KeyError:
+            #     pass
+
+            # Check for parent element.
+            # if has_parent:
+            #     parent = ParentElement(self.driver, the_dict['parent'])
+            #     # Remove parent element
+            #     del the_dict['parent']
+            # else:
+            #     parent = None
+
+            # self.elements[element_name] = PageElement(self.driver, the_dict, parent=parent)
             setattr(self, element_name, self.elements[element_name])
 
         return self
