@@ -44,6 +44,42 @@ def randomly_waits(function):
     return random_wait_decorator
 
 
+def randomly_waits_glance(function):
+    """
+    A decorator for waiting a random amount of time(4.99-15.01 seconds) after function execution.
+
+    Args:
+        function: function
+
+    Returns:
+        random_wait_decorator
+    """
+    def random_wait_decorator(*args, **kwargs):
+        function_result = function(*args, **kwargs)
+        sleep(uniform(4.99, 15.01))
+        return function_result
+
+    return random_wait_decorator
+
+
+def randomly_waits_browse(function):
+    """
+    A decorator for waiting a random amount of time(14.99-30.01 seconds) after function execution.
+
+    Args:
+        function: function
+
+    Returns:
+        random_wait_decorator
+    """
+    def random_wait_decorator(*args, **kwargs):
+        function_result = function(*args, **kwargs)
+        sleep(uniform(14.99, 30.01))
+        return function_result
+
+    return random_wait_decorator
+
+
 @randomly_waits
 def human_fill(element, text):
     """
