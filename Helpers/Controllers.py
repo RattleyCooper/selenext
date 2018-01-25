@@ -2,6 +2,7 @@ from random import uniform
 from time import sleep
 from .Commands import Kwargs
 from selenium.webdriver.support.wait import WebDriverWait
+from selenext.Environment import env
 
 
 # Generate a bunch of decorators for waiting up to 60 seconds.
@@ -40,6 +41,27 @@ def randomly_waits(function):
         function_result = function(*args, **kwargs)
         # Sleep
         sleep(uniform(0.99, 3.01))
+        return function_result
+    return random_wait_decorator
+
+
+def randomly_waits_env_range(function):
+    """
+    A decorator for waiting a random amount of time after function execution.  The range is defined
+    in the project .env file using the `WAIT_LOW` & `WAIT_HIGH` keys.
+
+    Args:
+        function: function
+
+    Returns:
+        random_wait_decorator
+    """
+
+    def random_wait_decorator(*args, **kwargs):
+        # Execute function and grab result
+        function_result = function(*args, **kwargs)
+        # Sleep
+        sleep(uniform(env('WAIT_LOW', func=float), env('WAIT_HIGH', func=float)))
         return function_result
     return random_wait_decorator
 
