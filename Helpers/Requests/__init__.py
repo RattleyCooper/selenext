@@ -159,7 +159,7 @@ class WebElement(object):
         tree = etree.fromstring(self.current_response, etree.HTMLParser())
         element = tree.xpath(xpath)[0]
         self.current_response = etree.tostring(element)
-        print(self.current_response)
+        # print(self.current_response)
         return WebElement(None, self.current_response, self.current_url, parent=self.id)
 
     # %%%%%%%%%%%%%%%%%%% Find elements %%%%%%%%%%%%%%%%%%% #
