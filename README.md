@@ -1,5 +1,9 @@
 selenext is a micro-framework for web automation/scraping using selenium in Python 2 or Python 3.  This is currently still in development, however it's possible to write and run your automations within the framework as it is.
 
+## Discord
+
+https://discord.gg/x8KC5Xh
+
 ## Install
 
 Just download this as a .zip and then unzip the `selenext` directory into 
