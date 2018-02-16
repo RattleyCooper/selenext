@@ -24,7 +24,10 @@ def migrate(models):
         'TimeField',
         'TimestampField', 'UUIDField', 'Using', 'Window', '__builtins__',
         '__doc__', '__file__', '__name__', '__package__', 'datetime', 'db',
-        'fn', 'prefetch'
+        'fn', 'prefetch', 'AutoField', 'Column', 'IPField', 'Index', 'Database',
+        'DeferredThroughModel', 'ModelIndex', 'BitField', 'Select', 'SchemaManager',
+        'ManyToManyField', 'BigBitField', 'Context', 'Value', 'Table', 'DeferredForeignKey',
+        'Cast'
     ]
 
     migrations = list(set(dir(models)) - set(models_pieces))
