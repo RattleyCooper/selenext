@@ -366,7 +366,7 @@ class WebReader(WebElement):
         self.get(self.web_history.forward())
         return self
 
-    def get(self, url, headers=None, add_to_history=True):
+    def get(self, url, headers=None, add_to_history=True, cookies=None):
         """
         Get a response for the given url.
 
@@ -374,6 +374,7 @@ class WebReader(WebElement):
             url:
             headers:
             add_to_history:
+            cookies:
 
         Returns:
             str
@@ -386,7 +387,11 @@ class WebReader(WebElement):
         if headers is None:
             headers = {}
 
-        self.current_response = self.requests.get(url, headers=headers).text.strip()
+        self.current_response = self.requests.get(
+            url,
+            headers=headers,
+            cookies=cookies if cookies else {}
+        ).text.strip()
 
         # Check for json response and if so, then return a dictionary
         # and set the current response to the dictionary.
